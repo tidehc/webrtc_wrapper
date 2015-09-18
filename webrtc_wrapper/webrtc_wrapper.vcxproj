@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{DA0F3F07-636F-4CB9-A099-F1896B23994C}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>webrtc_wrapper</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;WEBRTC_WRAPPER_EXPORTS;WEBRTC_EVERYWHERE_EXPORTS;WE_CONFIG_CRYPT_KEY="0000000000000000";WE_CONFIG_CRYPT_IV="0000000000000000";V8_DEPRECATION_WARNINGS;EXPAT_RELATIVE_PATH;FEATURE_ENABLE_VOICEMAIL;GTEST_RELATIVE_PATH;JSONCPP_RELATIVE_PATH;LOGGING=1;SRTP_RELATIVE_PATH;FEATURE_ENABLE_SSL;FEATURE_ENABLE_PSTN;HAVE_SCTP;HAVE_SRTP;HAVE_WEBRTC_VIDEO;HAVE_WEBRTC_VOICE;_WIN32_WINNT=0x0501;WINVER=0x0501;NOMINMAX;PSAPI_VERSION=1;_CRT_RAND_S;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;WIN32_LEAN_AND_MEAN;_ATL_NO_OPENGL;_SECURE_ATL;_HAS_EXCEPTIONS=0;_WINSOCK_DEPRECATED_NO_WARNINGS;CHROMIUM_BUILD;TOOLKIT_VIEWS=1;USE_AURA=1;USE_ASH=1;USE_DEFAULT_RENDER_THEME=1;USE_LIBJPEG_TURBO=1;ENABLE_ONE_CLICK_SIGNIN;ENABLE_PRE_SYNC_BACKUP;ENABLE_REMOTING=1;ENABLE_WEBRTC=1;ENABLE_PEPPER_CDMS;ENABLE_CONFIGURATION_POLICY;ENABLE_NOTIFICATIONS;ENABLE_HIDPI=1;DONT_EMBED_BUILD_METADATA;NO_TCMALLOC;ALLOCATOR_SHIM;__STD_C;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;NTDDI_VERSION=0x06030000;_USING_V110_SDK71_;ENABLE_TASK_MANAGER=1;ENABLE_EXTENSIONS=1;ENABLE_PLUGIN_INSTALLATION=1;ENABLE_PLUGINS=1;ENABLE_SESSION_SERVICE=1;ENABLE_THEMES=1;ENABLE_AUTOFILL_DIALOG=1;ENABLE_BACKGROUND=1;ENABLE_GOOGLE_NOW=1;CLD_VERSION=2;ENABLE_PRINTING=1;ENABLE_BASIC_PRINTING=1;ENABLE_PRINT_PREVIEW=1;ENABLE_SPELLCHECK=1;ENABLE_CAPTIVE_PORTAL_DETECTION=1;ENABLE_APP_LIST=1;ENABLE_SETTINGS_APP=1;ENABLE_SUPERVISED_USERS=1;ENABLE_MDNS=1;ENABLE_SERVICE_DISCOVERY=1;ENABLE_WIFI_BOOTSTRAPPING=1;V8_USE_EXTERNAL_STARTUP_DATA;LIBPEERCONNECTION_LIB=1;WEBRTC_WIN;USE_LIBPCI=1;USE_OPENSSL=1;_CRT_NONSTDC_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;DYNAMIC_ANNOTATIONS_ENABLED=1;WTF_USE_DYNAMIC_ANNOTATIONS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\..\webrtc-checkout\src;..\..\webrtc-checkout\src\third_party;..\..\webrtc-checkout\src\third_party\webrtc;..\..\webrtc-checkout\src\webrtc;..\..\webrtc-checkout\src\third_party\wtl\include;..\..\webrtc-checkout\src\third_party\jsoncpp\overrides\include;..\..\webrtc-checkout\src\third_party\jsoncpp\source\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\..\webrtc-checkout\src\out\Debug;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wininet.lib;dnsapi.lib;version.lib;msimg32.lib;ws2_32.lib;usp10.lib;psapi.lib;dbghelp.lib;winmm.lib;shlwapi.lib;kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;odbc32.lib;odbccp32.lib;delayimp.lib;credui.lib;netapi32.lib;Strmiids.lib;crypt32.lib;iphlpapi.lib;secur32.lib;dmoguids.lib;wmcodecdspuuid.lib;amstrmid.lib;msdmo.lib;obj\third_party\jsoncpp\jsoncpp.lib;obj\talk\libjingle_peerconnection.lib;obj\third_party\expat\expat.lib;obj\webrtc\base\rtc_base.lib;obj\webrtc\webrtc_common.lib;obj\webrtc\base\rtc_base_approved.lib;obj\third_party\boringssl\boringssl.lib;obj\talk\libjingle_media.lib;libyuv.lib;obj\third_party\libjpeg_turbo\libjpeg.lib;obj\third_party\usrsctp\usrsctplib.lib;obj\webrtc\modules\video_render_module.lib;obj\webrtc\modules\webrtc_utility.lib;obj\webrtc\modules\audio_coding_module.lib;obj\webrtc\modules\CNG.lib;obj\webrtc\common_audio\common_audio.lib;obj\webrtc\system_wrappers\system_wrappers.lib;obj\third_party\openmax_dl\dl\openmax_dl.lib;obj\webrtc\common_audio\common_audio_sse2.lib;obj\webrtc\modules\audio_encoder_interface.lib;obj\webrtc\modules\G711.lib;obj\webrtc\modules\G722.lib;obj\webrtc\modules\iLBC.lib;obj\webrtc\modules\iSAC.lib;obj\webrtc\modules\audio_decoder_interface.lib;obj\webrtc\modules\PCM16B.lib;obj\webrtc\modules\red.lib;obj\webrtc\modules\webrtc_opus.lib;obj\third_party\opus\opus.lib;obj\webrtc\modules\neteq.lib;obj\webrtc\modules\media_file.lib;obj\webrtc\common_video\common_video.lib;obj\webrtc\webrtc.lib;obj\webrtc\modules\rtp_rtcp.lib;obj\webrtc\modules\paced_sender.lib;obj\webrtc\modules\remote_bitrate_estimator.lib;obj\webrtc\modules\bitrate_controller.lib;obj\webrtc\modules\video_capture_module.lib;obj\webrtc\modules\webrtc_video_coding.lib;obj\webrtc\modules\webrtc_i420.lib;obj\webrtc\modules\video_coding\utility\video_coding_utility.lib;obj\webrtc\modules\video_coding\codecs\vp8\webrtc_vp8.lib;obj\third_party\libvpx\libvpx.lib;obj\third_party\libvpx\libvpx_intrinsics_mmx.lib;obj\third_party\libvpx\libvpx_intrinsics_sse2.lib;obj\third_party\libvpx\libvpx_intrinsics_ssse3.lib;obj\third_party\libvpx\libvpx_intrinsics_sse4_1.lib;obj\third_party\libvpx\libvpx_intrinsics_avx2.lib;obj\webrtc\modules\video_coding\codecs\vp9\webrtc_vp9.lib;obj\webrtc\modules\video_processing.lib;obj\webrtc\modules\video_processing_sse2.lib;obj\webrtc\voice_engine\voice_engine.lib;obj\webrtc\modules\audio_conference_mixer.lib;obj\webrtc\modules\audio_processing.lib;obj\webrtc\modules\audioproc_debug_proto.lib;obj\third_party\protobuf\protobuf_lite.lib;obj\webrtc\modules\audio_processing_sse2.lib;obj\webrtc\modules\audio_device.lib;obj\webrtc\sound\rtc_sound.lib;obj\webrtc\system_wrappers\field_trial_default.lib;obj\webrtc\system_wrappers\metrics_default.lib;obj\webrtc\libjingle\xmllite\rtc_xmllite.lib;obj\webrtc\libjingle\xmpp\rtc_xmpp.lib;obj\webrtc\p2p\rtc_p2p.lib;obj\webrtc\modules\video_capture_module_internal_impl.lib;obj\third_party\winsdk_samples\directshow_baseclasses.lib;obj\webrtc\modules\video_render_module_internal_impl.lib;obj\talk\libjingle_p2p.lib;obj\third_party\libsrtp\libsrtp.lib;obj\webrtc\modules\webrtc_h264.lib;obj\webrtc\modules\desktop_capture.lib;obj\webrtc\modules\desktop_capture_differ_sse2.lib;obj\webrtc\modules\isac_common.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="async_event_.hpp" />
+    <ClInclude Include="buffer_.hpp" />
+    <ClInclude Include="common.h" />
+    <ClInclude Include="common_.hpp" />
+    <ClInclude Include="config_.hpp" />
+    <ClInclude Include="debug_.hpp" />
+    <ClInclude Include="dummy.h" />
+    <ClInclude Include="encrypt_ctx_.hpp" />
+    <ClInclude Include="media_stream_.hpp" />
+    <ClInclude Include="media_stream_constraints_.hpp" />
+    <ClInclude Include="media_stream_track_.hpp" />
+    <ClInclude Include="media_track_constraints_.hpp" />
+    <ClInclude Include="peer_connection.h" />
+    <ClInclude Include="peer_connection_.hpp" />
+    <ClInclude Include="rtc_data_channel.h" />
+    <ClInclude Include="rtc_data_channel_.hpp" />
+    <ClInclude Include="rtc_display_.hpp" />
+    <ClInclude Include="rtc_dtmf_sender_.hpp" />
+    <ClInclude Include="rtc_ice_candidate_.hpp" />
+    <ClInclude Include="rtc_media_constraints_.hpp" />
+    <ClInclude Include="screen_video_capturer_.hpp" />
+    <ClInclude Include="session_description_.hpp" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="utils_.hpp" />
+    <ClInclude Include="webrtc_wrapper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="async_event_.cc" />
+    <ClCompile Include="buffer_.cc" />
+    <ClCompile Include="common.cpp" />
+    <ClCompile Include="common_.cc" />
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="dummy.cpp" />
+    <ClCompile Include="encrypt_ctx_.cc" />
+    <ClCompile Include="media_stream_.cc" />
+    <ClCompile Include="media_stream_constraints_.cc" />
+    <ClCompile Include="media_stream_track_.cc" />
+    <ClCompile Include="media_track_constraints_.cc" />
+    <ClCompile Include="peer_connection.cpp" />
+    <ClCompile Include="peer_connection_.cc" />
+    <ClCompile Include="rtc_data_channel_.cc" />
+    <ClCompile Include="rtc_display_.cc" />
+    <ClCompile Include="rtc_dtmf_sender_.cc" />
+    <ClCompile Include="rtc_ice_candidate_.cc" />
+    <ClCompile Include="rtc_media_constraints_.cc" />
+    <ClCompile Include="screen_video_capturer_.cc" />
+    <ClCompile Include="session_description_.cc" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="utils_.cc" />
+    <ClCompile Include="webrtc_wrapper.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
