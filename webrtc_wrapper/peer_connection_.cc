@@ -76,7 +76,7 @@ public:
 			std::string sdp;
 			desc->ToString(&sdp);
 			cpp11::shared_ptr<_SessionDescription>_sdp(new _SessionDescription((const void*)sdp.c_str(), sdp.length(), (const void*)desc->type().c_str(), desc->type().length()));
-			m_successCallback(_sdp);
+			m_successCallback(_sdp, m_pc->getHandle()); //modified by uniray
 		}
 	}
 	virtual void OnFailure(const std::string& error) {
@@ -152,7 +152,7 @@ private:
 //	_RTCPeerConnection
 //
 
-_RTCPeerConnection::_RTCPeerConnection(const _PeerConnection* pcBase, const webrtc::PeerConnectionInterface::RTCConfiguration& configuration, const webrtc::MediaConstraintsInterface* constraints /*= NULL*/)
+_RTCPeerConnection::_RTCPeerConnection(const _PeerConnection* pcBase, const webrtc::PeerConnectionInterface::RTCConfiguration& configuration, const webrtc::MediaConstraintsInterface* constraints /*= NULL*/) 
 	: m_bValid(false)
 	, m_pcBase(pcBase)
 {
@@ -394,6 +394,16 @@ cpp11::shared_ptr<_RTCDataChannel> _RTCPeerConnection::CreateDataChannel(const s
 	return nullPtr;
 }
 
+unsigned int _RTCPeerConnection::getHandle() const // added by uniray
+{
+	return _RTCPeerConnection::handle;
+}
+
+void _RTCPeerConnection::setHandle(unsigned int handle) // added by uniray
+{
+	_RTCPeerConnection::handle = handle;
+}
+
 _RTCPeerConnection::~_RTCPeerConnection()
 {
 	m_peer_connection = NULL;
@@ -444,7 +454,7 @@ void _RTCPeerConnection::OnRenegotiationNeeded()
 {
 	WE_DEBUG_INFO("_RTCPeerConnection::OnRenegotiationNeeded");
 	if (m_pcBase && m_pcBase->onnegotiationneeded) {
-		m_pcBase->onnegotiationneeded();
+		m_pcBase->onnegotiationneeded(m_pcBase->getHandle()); // modified by uniray
 	}
 }
 
@@ -466,11 +476,11 @@ void _RTCPeerConnection::OnIceCandidate(const webrtc::IceCandidateInterface* can
 			candidate->ToString(&_str);
 			cpp11::shared_ptr<_RTCIceCandidate>_candidate(new _RTCIceCandidate(_str.c_str(), candidate->sdp_mid().c_str(), candidate->sdp_mline_index()));
 			cpp11::shared_ptr<_RTCPeerConnectionIceEvent>_e(new _RTCPeerConnectionIceEvent(_candidate));
-			m_pcBase->onicecandidate(_e);
+			m_pcBase->onicecandidate(_e, m_pcBase->getHandle()); // modified by uniray
 		}
 		else {
 			cpp11::shared_ptr<_RTCPeerConnectionIceEvent>_e(nullPtr);
-			m_pcBase->onicecandidate(_e);
+			m_pcBase->onicecandidate(_e, m_pcBase->getHandle()); // modified by uniray
 		}
 	}
 }
@@ -875,6 +885,17 @@ cpp11::shared_ptr<_RTCDataChannel> _PeerConnection::CreateDataChannel(const char
 		return dataChannel;
 	}
 	return nullPtr;
+}
+
+unsigned int _PeerConnection::getHandle() const // added by uniray
+{
+	return handle;
+}
+
+void _PeerConnection::setHandle(unsigned int handle) // added by uniray
+{
+	_PeerConnection::handle = handle;
+	_PeerConnection::m_peer_connection->setHandle(handle);
 }
 
 bool _PeerConnection::DeInit()

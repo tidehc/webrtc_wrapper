@@ -50,16 +50,16 @@ extern "C" {
 		void* user_data_;
 	} peerconnection_ctx;
 
-	typedef void (*on_negotiation_needed)(peerconnection_ctx*);
-	typedef void (*on_ice_candidate)(peerconnection_ctx* , const char* /*TODO: const char* canidate*/);
-	typedef void (*on_signaling_state_change)(peerconnection_ctx*, signaling_state /*signaling_state*/);
-	typedef void (*on_ice_connection_state_change)(peerconnection_ctx*, ice_connection_state /*ice_connection_state*/);
-	typedef void (*on_ice_gathering_state_change)(peerconnection_ctx*, ice_gathering_state /*ice_gathering_state*/);
+	typedef void (*on_negotiation_needed_callback)(peerconnection_ctx*);
+	typedef void (*on_ice_candidate_callback)(peerconnection_ctx* , const char* /*TODO: const char* canidate*/);
+	typedef void (*on_signaling_state_change_callback)(peerconnection_ctx*, signaling_state /*signaling_state*/);
+	typedef void (*on_ice_connection_state_change_callback)(peerconnection_ctx*, ice_connection_state /*ice_connection_state*/);
+	typedef void (*on_ice_gathering_state_change_callback)(peerconnection_ctx*, ice_gathering_state /*ice_gathering_state*/);
 
 	// http://www.w3.org/TR/webrtc/#legacy-interface-extensions
 	
 	// http://www.w3.org/TR/webrtc/#idl-def-RTCSessionDescriptionCallback
-	typedef void(*on_rtc_session_description)(peerconnection_ctx*, rtc_session_description*);
+	typedef void(*on_rtc_session_description_callback)(peerconnection_ctx*, rtc_session_description*);
 	
 	typedef void(*on_void_function)();
 	
@@ -71,11 +71,11 @@ extern "C" {
 	 * @param configuration TestCase 1 - { [ { "urls": "stun.l.google.com:19302" }, { "urls": "turn:turn.example.org", "username": "user", "credential": "myPassword" } ] }
 	 */
 	WEBRTC_WRAPPER_API peerconnection_ctx* peer_connection_create(const char* configuration, //
-		on_negotiation_needed negotiation_needed,
-		on_ice_candidate ice_candidate,
-		on_signaling_state_change signaling_state_change,
-		on_ice_connection_state_change ice_connection_state_change,
-		on_ice_gathering_state_change ice_gathering_state_change,
+		on_negotiation_needed_callback negotiation_needed,
+		on_ice_candidate_callback ice_candidate,
+		on_signaling_state_change_callback signaling_state_change,
+		on_ice_connection_state_change_callback ice_connection_state_change,
+		on_ice_gathering_state_change_callback ice_gathering_state_change,
 		void* user_data);
 
 	WEBRTC_WRAPPER_API void peer_connection_destroy(peerconnection_ctx* ctx);
@@ -90,12 +90,12 @@ extern "C" {
 	int peer_connection_can_trickle_ice_candidates();
 	
 	// http://www.w3.org/TR/webrtc/#legacy-interface-extensions
-	int peer_connection_create_offer(peerconnection_ctx* ctx, on_rtc_session_description success, on_rtc_peer_connection_error failure);
-	int peer_connection_create_answer(peerconnection_ctx* ctx, on_rtc_session_description success, on_rtc_peer_connection_error failure);
+	WEBRTC_WRAPPER_API int peer_connection_create_offer(peerconnection_ctx* ctx, on_rtc_session_description_callback success, on_rtc_peer_connection_error failure);
+	WEBRTC_WRAPPER_API int peer_connection_create_answer(peerconnection_ctx* ctx, on_rtc_session_description_callback success, on_rtc_peer_connection_error failure);
 
 	// get description
-	const char* peer_connection_local_description(peerconnection_ctx* ctx);
-	const char* peer_connection_remote_description(peerconnection_ctx* ctx);
+	WEBRTC_WRAPPER_API const char* peer_connection_local_description(peerconnection_ctx* ctx);
+	WEBRTC_WRAPPER_API const char* peer_connection_remote_description(peerconnection_ctx* ctx);
 	/**
 	 * @param description TestCase 1: 
 	 */

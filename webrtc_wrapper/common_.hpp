@@ -395,7 +395,7 @@ typedef cpp11::function<void()> _VoidFunctionCallback;
 typedef cpp11::function<void(cpp11::shared_ptr<std::string> string)> _StringFunctionCallback;
 
 // http://www.w3.org/TR/webrtc/#idl-def-RTCSessionDescriptionCallback
-typedef cpp11::function<void(cpp11::shared_ptr<_SessionDescription> sdp)> _RTCSessionDescriptionCallback;
+typedef cpp11::function<void(cpp11::shared_ptr<_SessionDescription> sdp, unsigned int handle)> _RTCSessionDescriptionCallback;
 
 // http://www.w3.org/TR/webrtc/#idl-def-RTCPeerConnectionErrorCallback
 typedef cpp11::function<void(cpp11::shared_ptr<std::string> error)> _RTCPeerConnectionErrorCallback;
@@ -407,9 +407,9 @@ typedef cpp11::function<void(cpp11::shared_ptr<_MediaStream> stream)> _Navigator
 typedef cpp11::function<void(cpp11::shared_ptr<_NavigatorUserMediaError> e)> _NavigatorUserMediaErrorCallback;
 
 // http://www.w3.org/TR/webrtc/#event-negotiation
-typedef cpp11::function<void()> _onnegotiationneededCallback;
+typedef cpp11::function<void(unsigned int handle)> _onnegotiationneededCallback;
 // http://www.w3.org/TR/webrtc/#event-icecandidate
-typedef cpp11::function<void(cpp11::shared_ptr<_RTCPeerConnectionIceEvent> e)> _onicecandidateCallback;
+typedef cpp11::function<void(cpp11::shared_ptr<_RTCPeerConnectionIceEvent> e, unsigned int handle)> _onicecandidateCallback;
 // http://www.w3.org/TR/webrtc/#event-signalingstatechange
 typedef cpp11::function<void()> _onsignalingstatechangeCallback;
 // http://www.w3.org/TR/webrtc/#event-mediastream-addstream

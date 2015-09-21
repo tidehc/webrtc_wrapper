@@ -59,6 +59,9 @@ public:
 	cpp11::shared_ptr<_RTCDTMFSender> createDTMFSender(webrtc::AudioTrackInterface *track);
 	cpp11::shared_ptr<_RTCDataChannel> CreateDataChannel(const std::string& label, const webrtc::DataChannelInit* config);
 
+	unsigned int getHandle() const; // add by uniray
+	void setHandle(unsigned int handle); // add by uniray
+
 protected:
 	virtual ~_RTCPeerConnection();
 
@@ -79,6 +82,8 @@ private:
 	rtc::scoped_refptr<webrtc::PeerConnectionInterface> m_peer_connection;
 	rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> m_peer_connection_factory;
 	const _PeerConnection* m_pcBase;
+	
+	unsigned int handle; // add by uniray
 
 	bool m_bValid;
 };
@@ -117,6 +122,9 @@ public:
 	cpp11::shared_ptr<_RTCDTMFSender> CreateDtmfSender(_MediaStreamTrack *track);
 	cpp11::shared_ptr<_RTCDataChannel> CreateDataChannel(const char* label, cpp11::shared_ptr<_RTCDataChannelInit> dataChannelDict = nullPtr);
 
+	unsigned int getHandle() const; // add by uniray
+	void setHandle(unsigned int handle); // add by uniray
+
 	// callbacks
 	WE_INLINE void SetCallback_onnegotiationneeded(_onnegotiationneededCallback _onnegotiationneeded) { onnegotiationneeded = _onnegotiationneeded; }
 	WE_INLINE void SetCallback_onicecandidate(_onicecandidateCallback _onicecandidate) { onicecandidate = _onicecandidate; }
@@ -138,6 +146,8 @@ private:
 	cpp11::shared_ptr<_SessionDescription> m_sdp_local;
 	cpp11::shared_ptr<_SessionDescription> m_sdp_remote;
 	bool m_bInitialized;
+
+	unsigned int handle; // add by uniray
 
 	// callbacks
 	_onnegotiationneededCallback onnegotiationneeded;

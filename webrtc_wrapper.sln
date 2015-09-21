@@ -7,6 +7,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "webrtc_wrapper", "webrtc_wr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "webrtc_wrapper_console", "webrtc_wrapper_console\webrtc_wrapper_console.vcxproj", "{82C01205-BC02-4F5A-890D-6B6CD1EF095A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2830DFA0-EE0E-4E79-A576-CD1E59988703}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "peer_connection", "peer_connection", "{BE2125D5-A292-41B8-979A-32565BCE96F6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "peer_connection", "peer_connection\peer_connection.vcxproj", "{61FCBA3F-26C1-4D13-A43F-61E02D69625F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DA0F3F07-636F-4CB9-A099-F1896B23994C} = {DA0F3F07-636F-4CB9-A099-F1896B23994C}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data_channel", "data_channel", "{8654FBD7-D8C6-4D57-B298-137E1BE1826F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,8 +32,17 @@ Global
 		{82C01205-BC02-4F5A-890D-6B6CD1EF095A}.Debug|Win32.Build.0 = Debug|Win32
 		{82C01205-BC02-4F5A-890D-6B6CD1EF095A}.Release|Win32.ActiveCfg = Release|Win32
 		{82C01205-BC02-4F5A-890D-6B6CD1EF095A}.Release|Win32.Build.0 = Release|Win32
+		{61FCBA3F-26C1-4D13-A43F-61E02D69625F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{61FCBA3F-26C1-4D13-A43F-61E02D69625F}.Debug|Win32.Build.0 = Debug|Win32
+		{61FCBA3F-26C1-4D13-A43F-61E02D69625F}.Release|Win32.ActiveCfg = Release|Win32
+		{61FCBA3F-26C1-4D13-A43F-61E02D69625F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BE2125D5-A292-41B8-979A-32565BCE96F6} = {2830DFA0-EE0E-4E79-A576-CD1E59988703}
+		{61FCBA3F-26C1-4D13-A43F-61E02D69625F} = {BE2125D5-A292-41B8-979A-32565BCE96F6}
+		{8654FBD7-D8C6-4D57-B298-137E1BE1826F} = {2830DFA0-EE0E-4E79-A576-CD1E59988703}
 	EndGlobalSection
 EndGlobal
