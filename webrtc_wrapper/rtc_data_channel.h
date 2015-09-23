@@ -7,6 +7,26 @@
 extern "C" {
 #endif
 
+	struct datachannel_ctx_vars_;
+	struct datachannel_ctx_ops_;
+
+	typedef struct datachannel_ctx_ {
+		struct datachannel_ctx_vars_ * vars;
+		struct datachannel_ctx_ops_ * ops;
+	}datachannel_ctx;
+
+
+	typedef void(*on_datachennel_open_callback)();
+	typedef void(*on_datachannel_close_callback)();
+	typedef void(*on_datachannel_message_callback)();
+	typedef void(*on_datachannel_error_callback)(const char *);
+
+	WEBRTC_WRAPPER_API const char* label(); // readonly attribute DOMString label
+	
+	WEBRTC_WRAPPER_API int datachannel_close(datachannel_ctx *ctx);
+	WEBRTC_WRAPPER_API int datachannel_send(datachannel_ctx *ctx, /*TODO:_Buffer buf,*/ int binary);
+
+
 #ifdef __cplusplus
 }
 #endif

@@ -124,6 +124,7 @@
     <ClCompile Include="media_track_constraints_.cc" />
     <ClCompile Include="peer_connection.cpp" />
     <ClCompile Include="peer_connection_.cc" />
+    <ClCompile Include="rtc_data_channel.cpp" />
     <ClCompile Include="rtc_data_channel_.cc" />
     <ClCompile Include="rtc_display_.cc" />
     <ClCompile Include="rtc_dtmf_sender_.cc" />

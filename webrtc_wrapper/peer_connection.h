@@ -1,7 +1,8 @@
 /* Copyright(C) 2015 Toppano <https://github.com/sukinull/libwebrtc> */
-#ifndef _WEBRTC_WRAPPER_RTC_DATA_CHANNEL_H_
-#define _WEBRTC_WRAPPER_RTC_DATA_CHANNEL_H_
+#ifndef _WEBRTC_WRAPPER_PEER_CONNECTION_H_
+#define _WEBRTC_WRAPPER_PEER_CONNECTION_H_
 #include "common.h"
+#include "rtc_data_channel.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -9,7 +10,7 @@ extern "C" {
 
 	struct peerconnection_ctx_vars_;
 	struct peerconnection_ctx_ops_;
-
+	
 	//http://www.w3.org/TR/2015/WD-webrtc-20150210/#rtcpeerstate-enum
 	typedef enum _signaling_state {
 		SIG_STATE_STABLE,
@@ -23,7 +24,7 @@ extern "C" {
 	//http://www.w3.org/TR/2015/WD-webrtc-20150210/#rtcicegatheringstate-enum
 	typedef enum _ice_gathering_state {
 		GATHER_STATE_NEW,
-		GATHER_STATE_GATHERING,
+		GATHER_STATE_GATHERING,  
 		GATHER_STATE_COMPLETE
 	} ice_gathering_state;
 
@@ -43,7 +44,7 @@ extern "C" {
 		char* sdp;
 	} rtc_session_description;
 
-	typedef struct _peerconnection_ctx {
+	typedef struct peerconnection_ctx_ {
 		unsigned int handle;
 		struct peerconnection_ctx_vars_ * vars;
 		struct peerconnection_ctx_ops_ * ops;
@@ -103,7 +104,14 @@ extern "C" {
 	void peer_connection_set_remote_description(peerconnection_ctx* ctx, rtc_session_description* description, on_void_function success, on_rtc_peer_connection_error failure);
 	void peer_connection_add_ice_candidate(peerconnection_ctx* ctx, const char* candidate, on_void_function success, on_rtc_peer_connection_error failure);
 
+	WEBRTC_WRAPPER_API datachannel_ctx* peer_connection_create_datachannel(peerconnection_ctx* ctx,
+		const char* label,  /*TODO: datachannel config*/
+		on_datachennel_open_callback on_open_cb,
+		on_datachannel_message_callback on_message_cb,
+		on_datachannel_error_callback on_error_cb,
+		on_datachannel_close_callback on_close_cb);
+
 #ifdef __cplusplus
 }
 #endif
-#endif // _WEBRTC_WRAPPER_RTC_DATA_CHANNEL_H_
+#endif // _WEBRTC_WRAPPER_PEER_CONNECTION_H_
