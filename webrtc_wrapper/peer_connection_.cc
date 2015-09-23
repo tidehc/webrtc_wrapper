@@ -26,9 +26,9 @@
 class DummySetSessionDescriptionObserver
 	: public webrtc::SetSessionDescriptionObserver {
 public:
-	static DummySetSessionDescriptionObserver* Create(_VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr) {
+	static DummySetSessionDescriptionObserver* Create(unsigned int handle /*added by uniray*/, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr) {
 		return
-			new rtc::RefCountedObject<DummySetSessionDescriptionObserver>(successCallback, failureCallback);
+			new rtc::RefCountedObject<DummySetSessionDescriptionObserver>(handle, successCallback, failureCallback);
 	}
 	virtual void OnSuccess() {
 		LOG(INFO) << __FUNCTION__;
@@ -40,19 +40,20 @@ public:
 		LOG(INFO) << __FUNCTION__ << " " << error;
 		cpp11::shared_ptr<std::string> err(new std::string(error));
 		if (m_failureCallback) {
-			m_failureCallback(err);
+			m_failureCallback(handle, err);
 		}
 	}
 
 protected:
-	DummySetSessionDescriptionObserver(_VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr) : m_successCallback(successCallback), m_failureCallback(failureCallback){}
+	DummySetSessionDescriptionObserver(unsigned int handle/*added by uniray*/, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr) :handle(handle)/*added by uniray*/, m_successCallback(successCallback), m_failureCallback(failureCallback){}
 	~DummySetSessionDescriptionObserver()
 	{
 		WE_DEBUG_INFO("~DummySetSessionDescriptionObserver");
 	}
 private:
 	_VoidFunctionCallback m_successCallback;
-	_RTCPeerConnectionErrorCallback m_failureCallback;
+	_RTCPeerConnectionErrorCallback_uniray m_failureCallback;
+	unsigned int handle; //added by uniray
 };
 
 //
@@ -194,10 +195,10 @@ bool _RTCPeerConnection::createAnswer(_RTCSessionDescriptionCallback successCall
 	return false;
 }
 
-bool _RTCPeerConnection::setLocalDescription(webrtc::SessionDescriptionInterface* description, _VoidFunctionCallback successCallback /*= nullPtr*/, _RTCPeerConnectionErrorCallback failureCallback /*= nullPtr*/)
+bool _RTCPeerConnection::setLocalDescription(webrtc::SessionDescriptionInterface* description, _VoidFunctionCallback successCallback /*= nullPtr*/, _RTCPeerConnectionErrorCallback_uniray failureCallback /*= nullPtr*/) 
 {
 	if (IsValid()) {
-		m_peer_connection->SetLocalDescription(DummySetSessionDescriptionObserver::Create(successCallback, failureCallback), description);
+		m_peer_connection->SetLocalDescription(DummySetSessionDescriptionObserver::Create(this->getHandle()/*addedd by uniray*/, successCallback, failureCallback), description);
 		return true;
 	}
 	return false;
@@ -214,7 +215,7 @@ const webrtc::SessionDescriptionInterface* _RTCPeerConnection::localDescription(
 bool _RTCPeerConnection::setRemoteDescription(webrtc::SessionDescriptionInterface* description, _VoidFunctionCallback successCallback /*= nullPtr*/, _RTCPeerConnectionErrorCallback failureCallback /*= nullPtr*/)
 {
 	if (IsValid()) {
-		m_peer_connection->SetRemoteDescription(DummySetSessionDescriptionObserver::Create(successCallback, failureCallback), description);
+		m_peer_connection->SetRemoteDescription(DummySetSessionDescriptionObserver::Create(this->handle, successCallback, failureCallback), description);
 		return true;
 	}
 	return false;
@@ -590,7 +591,7 @@ bool _PeerConnection::CreateAnswer(_RTCSessionDescriptionCallback successCallbac
 
 // http://www.w3.org/TR/webrtc/#widl-RTCPeerConnection-setLocalDescription-void-RTCSessionDescription-description-VoidFunction-successCallback-RTCPeerConnectionErrorCallback-failureCallback
 // void setLocalDescription (RTCSessionDescription description, VoidFunction successCallback, RTCPeerConnectionErrorCallback failureCallback);
-bool _PeerConnection::SetLocalDescription(const _SessionDescription* description, _VoidFunctionCallback successCallback /*= nullPtr*/, _RTCPeerConnectionErrorCallback failureCallback /*= nullPtr*/)
+bool _PeerConnection::SetLocalDescription(const _SessionDescription* description, _VoidFunctionCallback successCallback /*= nullPtr*/, _RTCPeerConnectionErrorCallback_uniray failureCallback /*= nullPtr*/) 
 {
 	CHECK_INITIALIZED();
 	if (!description) {
@@ -604,7 +605,7 @@ bool _PeerConnection::SetLocalDescription(const _SessionDescription* description
 	webrtc::SessionDescriptionInterface* _description = webrtc::CreateSessionDescription(type, sdp, &err);
 	if (!_description) {
 		if (failureCallback) {
-			failureCallback(cpp11::shared_ptr<std::string>(new std::string(err.description)));
+			failureCallback(this->handle/*added by uniray*/,cpp11::shared_ptr<std::string>(new std::string(err.description)));
 			WE_DEBUG_ERROR("CreateSessionDescription eror: %s", err.description.c_str());
 		}
 		return false;

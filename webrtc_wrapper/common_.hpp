@@ -399,6 +399,7 @@ typedef cpp11::function<void(cpp11::shared_ptr<_SessionDescription> sdp, unsigne
 
 // http://www.w3.org/TR/webrtc/#idl-def-RTCPeerConnectionErrorCallback
 typedef cpp11::function<void(cpp11::shared_ptr<std::string> error)> _RTCPeerConnectionErrorCallback;
+typedef cpp11::function<void(unsigned int handle, cpp11::shared_ptr<std::string> error)> _RTCPeerConnectionErrorCallback_uniray;// added by uniray
 
 // http://www.w3.org/TR/mediacapture-streams/#idl-def-NavigatorUserMediaSuccessCallback
 typedef cpp11::function<void(cpp11::shared_ptr<_MediaStream> stream)> _NavigatorUserMediaSuccessCallback;

@@ -6,6 +6,7 @@
 #include "session_description_.hpp"
 #include "buffer_.hpp"
 #include "rtc_data_channel_.hpp"
+#include "rtc_ice_candidate_.hpp"
 
 #include "json\json.h"
 
@@ -36,6 +37,8 @@ typedef struct peerconnection_ctx_ops_{
 
 	on_rtc_session_description_callback create_offer_success_cb;
 	on_rtc_peer_connection_error create_offer_failure_cb;
+	on_void_function set_localSDP_success_cb;
+	on_rtc_peer_connection_error set_localSDP_failure_cb;
 } peerconnection_ctx_ops_;
 
 typedef struct rtc_ice_server_ {
@@ -45,6 +48,7 @@ typedef struct rtc_ice_server_ {
 } rtc_ice_server_;
 
 static map<unsigned int, pair<peerconnection_ctx*, _PeerConnection*> > pc_map_;
+static map<unsigned int, pair<datachannel_ctx*, _RTCDataChannel*> > dc_map_;
 
 // http://www.w3.org/TR/webrtc/#event-negotiation
 static void onnegotiationneededCallback(unsigned int handle)
@@ -64,11 +68,10 @@ static void onicecandidateCallback(std::shared_ptr<_RTCPeerConnectionIceEvent> e
 			peerConnection->AddIceCandidate(e->candidate.get());
 		}
 		peerconnection_ctx *ctx = pc_map_[handle].first;
-		/*
+		
 		_RTCIceCandidate* p = e->candidate.get();
 		const char *candidate = p->candidate();
-		printf("\nhaha   %s\n\n", candidate);
-		*/
+		ctx->ops->on_ice_candidate_cb(ctx, candidate);
 	}
 }
 
@@ -77,23 +80,27 @@ static void onicecandidateCallback(std::shared_ptr<_RTCPeerConnectionIceEvent> e
 static void oniceconnectionstatechangeCallback()
 {
 	fprintf(stderr, "*INFO: oniceconnectionstatechangeCallback called\n");
+	// TODO: get the _PeerConnection obj's connection state 
+	// and sync to peerconnection_ctx obj's
 }
 
 // http://www.w3.org/TR/webrtc/#event-signalingstatechange
 static void onsignalingstatechangeCallback()
 {
 	fprintf(stderr, "*INFO: New signaling state\n");
+	// TODO: get the _PeerConnection obj's signaling state 
+	// and sync to peerconnection_ctx obj's
 
 	/*if (peerConnection) {
 		fprintf(stderr, "*INFO: New signaling state: %s", peerConnection->SignalingState());
 	}*/
 }
 
+
 static void icecandidateErrorCb(std::shared_ptr<std::string> error)
 {
 	fprintf(stderr, "*INFO: candidate fail, %s\n", error.get());
 }
-
 
 
 static void CreateOfferSuccessCb(std::shared_ptr<_SessionDescription> sdp, unsigned int handle)
@@ -124,12 +131,6 @@ static void CreateOfferErrorCb(std::shared_ptr<std::string> error)
 
 }
 
-static void onOpenCallback()
-{
-	fprintf(stderr, "*INFO: on open!!!!!!!!!!!!!!!!!!\n");
-}
-
-
 
 WEBRTC_WRAPPER_API peerconnection_ctx* peer_connection_create(const char* configuration, 
 	on_negotiation_needed_callback negotiation_needed,
@@ -146,6 +147,7 @@ WEBRTC_WRAPPER_API peerconnection_ctx* peer_connection_create(const char* config
 	ret->ops = (peerconnection_ctx_ops_ *)calloc(1, sizeof(peerconnection_ctx_ops_));
 	ret->vars = (peerconnection_ctx_vars_ *)calloc(1, sizeof(peerconnection_ctx_vars_));
 	peerconnection_ctx_ops_ *ret_ops = ret->ops;
+	
 	ret_ops->on_negotiation_needed_cb = negotiation_needed;
 	ret_ops->on_ice_candidate_cb = ice_candidate;
 	ret_ops->on_signaling_state_change_cb = signaling_state_change;
@@ -242,14 +244,73 @@ WEBRTC_WRAPPER_API void peer_connection_close(peerconnection_ctx* ctx) {
 }
 
 
+
+
+static void SetLocalSDPFailureCb(unsigned int handle, cpp11::shared_ptr<std::string> error)
+{
+	const std::string error_str = *(error.get());
+	const char* c_error = error_str.c_str();
+	peerconnection_ctx *ctx = pc_map_[handle].first;
+	ctx->ops->set_localSDP_failure_cb(c_error);
+}
+
+static void SetLocalSDPSuccessCb(unsigned int handle) /*not used yet*/
+{
+	
+}
+
+
+WEBRTC_WRAPPER_API void peer_connection_set_local_description(peerconnection_ctx* ctx, 
+									rtc_session_description* description, 
+									on_void_function success, 
+									on_rtc_peer_connection_error failure)
+{
+	unsigned int handle = ctx->handle;
+	_PeerConnection *peerConnection = pc_map_[handle].second;
+	peerconnection_ctx_ops_ *ops = ctx->ops;
+	ops->set_localSDP_success_cb = success;
+	ops->set_localSDP_failure_cb = failure;
+
+	const char *sdpPtr = description->sdp;
+	size_t sdpSize = strlen(sdpPtr);
+	const char *typePtr = "offer\0";
+	size_t typeSize = strlen(typePtr);
+
+	_SessionDescription *sdp = new _SessionDescription(sdpPtr, sdpSize, typePtr, typeSize);
+
+	// TODO: the argument 2 and 3 of SetLocalDescription() might be a problem
+	peerConnection->SetLocalDescription(sdp, success, SetLocalSDPFailureCb);
+}
+
+WEBRTC_WRAPPER_API void peer_connection_set_remote_description(peerconnection_ctx* ctx, rtc_session_description* description, on_void_function success, on_rtc_peer_connection_error failure)
+{
+
+}
+
+
+// datachannel callback
+static void onOpenCallback()
+{
+	fprintf(stderr, "*INFO: on open!!!!!!!!!!!!!!!!!!\n");
+}
+
 WEBRTC_WRAPPER_API datachannel_ctx* peer_connection_create_datachannel(peerconnection_ctx* ctx, 
 		const char* label,  /*TODO: datachannel config*/
-		on_datachennel_open_callback on_open_cb,
+		on_datachannel_open_callback on_open_cb,
 		on_datachannel_message_callback on_message_cb,
 		on_datachannel_error_callback on_error_cb,
 		on_datachannel_close_callback on_close_cb)
 {
+	static unsigned int datachannel_count = 0;
 	// initialize a datachannel_ctx obj
+	datachannel_ctx *ret = create_datachannel_ctx();
+	
+	/* TODO: uniray: I don't know what's used for? */
+	set_datachannel_cb_onopen(ret, on_open_cb);
+	set_datachannel_cb_onmessage(ret, on_message_cb);
+	set_datachannel_cb_onerror(ret, on_error_cb);
+	set_datachannel_cb_onclose(ret, on_close_cb);
+
 
 	// _PeerConnection create datachannel
 	_PeerConnection *peerConnection = pc_map_[ctx->handle].second;
@@ -258,7 +319,14 @@ WEBRTC_WRAPPER_API datachannel_ctx* peer_connection_create_datachannel(peerconne
 	if (!(dataChannel = peerConnection->CreateDataChannel(label, datachannelConfig))) {
 		// TODO: do something
 	}
+
 	dataChannel->onopenSet(onOpenCallback);	
 	//dataChannel->onerrorSet()
+	
+	if (ret != NULL) {
+		unsigned int handle = datachannel_count++; //FIXME: May have concurrent problem, use mutex
+		dc_map_[handle] = make_pair(ret, dataChannel.get());
+		ret->handle = handle;
+	}
 	return NULL;
 }

@@ -65,7 +65,7 @@ extern "C" {
 	typedef void(*on_void_function)();
 	
 	//http://www.w3.org/TR/webrtc/#idl-def-RTCPeerConnectionErrorCallback
-	typedef void(*on_rtc_peer_connection_error)(char *error);
+	typedef void(*on_rtc_peer_connection_error)(const char *error);
 	
 	// https://w3c.github.io/webrtc-pc/#idl-def-RTCPeerConnection
 	/**
@@ -100,13 +100,13 @@ extern "C" {
 	/**
 	 * @param description TestCase 1: 
 	 */
-	void peer_connection_set_local_description(peerconnection_ctx* ctx, rtc_session_description* description, on_void_function success, on_rtc_peer_connection_error failure);
-	void peer_connection_set_remote_description(peerconnection_ctx* ctx, rtc_session_description* description, on_void_function success, on_rtc_peer_connection_error failure);
+	WEBRTC_WRAPPER_API void peer_connection_set_local_description(peerconnection_ctx* ctx, rtc_session_description* description, on_void_function success, on_rtc_peer_connection_error failure);
+	WEBRTC_WRAPPER_API void peer_connection_set_remote_description(peerconnection_ctx* ctx, rtc_session_description* description, on_void_function success, on_rtc_peer_connection_error failure);
 	void peer_connection_add_ice_candidate(peerconnection_ctx* ctx, const char* candidate, on_void_function success, on_rtc_peer_connection_error failure);
 
 	WEBRTC_WRAPPER_API datachannel_ctx* peer_connection_create_datachannel(peerconnection_ctx* ctx,
 		const char* label,  /*TODO: datachannel config*/
-		on_datachennel_open_callback on_open_cb,
+		on_datachannel_open_callback on_open_cb,
 		on_datachannel_message_callback on_message_cb,
 		on_datachannel_error_callback on_error_cb,
 		on_datachannel_close_callback on_close_cb);

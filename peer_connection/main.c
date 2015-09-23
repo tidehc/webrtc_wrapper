@@ -14,7 +14,7 @@ void _on_negotiation_needed(peerconnection_ctx* ctx)
 
 void _on_ice_candidate(peerconnection_ctx* ctx, const char *candidate)
 {
-
+	fprintf(stderr, "got candidate: %s!!!!!!!!!!\n", candidate);
 }
 
 void _on_signaling_state_change(peerconnection_ctx* ctx, signaling_state state)
@@ -32,10 +32,23 @@ void _on_ice_gathering_state_change(peerconnection_ctx* ctx, ice_gathering_state
 
 }
 
+
+
+void _on_set_localSDP_success()
+{
+	fprintf(stderr, "_on_create_offer_success\n");
+}
+
+void _on_set_localSDP_failure(const char *error)
+{
+	fprintf(stderr, "_on_set_localSDP_failure:%s\n", error);
+} 
+
 void _on_create_offer_success(peerconnection_ctx* ctx, rtc_session_description* sdp)
 {
 	//const char *ssdp = peer_connection_local_description(ctx);
 	fprintf(stderr, "hi!, \ntype:\n%s\n\nsdp:\n%s\n", sdp->type, sdp->sdp);
+	peer_connection_set_local_description(ctx, sdp, _on_set_localSDP_success, _on_set_localSDP_failure);
 }
 
 void _on_create_offer_failure(char *error)

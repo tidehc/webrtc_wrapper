@@ -40,7 +40,7 @@ public:
 
 	bool createOffer(_RTCSessionDescriptionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr, const webrtc::MediaConstraintsInterface* constraints = NULL);
 	bool createAnswer(_RTCSessionDescriptionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr, const webrtc::MediaConstraintsInterface* constraints = NULL);
-	bool setLocalDescription(webrtc::SessionDescriptionInterface* description, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr);
+	bool setLocalDescription(webrtc::SessionDescriptionInterface* description, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback_uniray failureCallback = nullPtr);
 	const webrtc::SessionDescriptionInterface* localDescription();
 	bool setRemoteDescription(webrtc::SessionDescriptionInterface* description, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr);
 	const webrtc::SessionDescriptionInterface* remoteDescription();
@@ -103,7 +103,7 @@ public:
 
 	bool CreateOffer(_RTCSessionDescriptionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr, const _MediaConstraintsObj* constraints = NULL);
 	bool CreateAnswer(_RTCSessionDescriptionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr, const _MediaConstraintsObj* constraints = NULL);
-	bool SetLocalDescription(const _SessionDescription* description, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr);
+	bool SetLocalDescription(const _SessionDescription* description, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback_uniray failureCallback = nullPtr);
 	cpp11::shared_ptr<_SessionDescription> LocalDescription();
 	bool SetRemoteDescription(const _SessionDescription* description, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr);
 	cpp11::shared_ptr<_SessionDescription> RemoteDescription();
