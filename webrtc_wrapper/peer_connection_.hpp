@@ -42,7 +42,7 @@ public:
 	bool createAnswer(_RTCSessionDescriptionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr, const webrtc::MediaConstraintsInterface* constraints = NULL);
 	bool setLocalDescription(webrtc::SessionDescriptionInterface* description, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback_uniray failureCallback = nullPtr);
 	const webrtc::SessionDescriptionInterface* localDescription();
-	bool setRemoteDescription(webrtc::SessionDescriptionInterface* description, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr);
+	bool setRemoteDescription(webrtc::SessionDescriptionInterface* description, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback_uniray failureCallback = nullPtr);
 	const webrtc::SessionDescriptionInterface* remoteDescription();
 	const char* signalingState();
 	bool updateIce(const webrtc::PeerConnectionInterface::RTCConfiguration& configuration, const webrtc::MediaConstraintsInterface* constraints = NULL);
@@ -105,7 +105,7 @@ public:
 	bool CreateAnswer(_RTCSessionDescriptionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr, const _MediaConstraintsObj* constraints = NULL);
 	bool SetLocalDescription(const _SessionDescription* description, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback_uniray failureCallback = nullPtr);
 	cpp11::shared_ptr<_SessionDescription> LocalDescription();
-	bool SetRemoteDescription(const _SessionDescription* description, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr);
+	bool SetRemoteDescription(const _SessionDescription* description, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback_uniray failureCallback = nullPtr);
 	cpp11::shared_ptr<_SessionDescription> RemoteDescription();
 	const char* SignalingState();
 	bool UpdateIce(const _RTCConfiguration* configuration = NULL, const _MediaConstraintsObj* constraints = NULL);

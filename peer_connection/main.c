@@ -36,7 +36,7 @@ void _on_ice_gathering_state_change(peerconnection_ctx* ctx, ice_gathering_state
 
 void _on_set_localSDP_success()
 {
-	fprintf(stderr, "_on_create_offer_success\n");
+	fprintf(stderr, "_on_create_offer_success????????????????????????????\n");
 }
 
 void _on_set_localSDP_failure(const char *error)
@@ -48,7 +48,7 @@ void _on_create_offer_success(peerconnection_ctx* ctx, rtc_session_description* 
 {
 	//const char *ssdp = peer_connection_local_description(ctx);
 	fprintf(stderr, "hi!, \ntype:\n%s\n\nsdp:\n%s\n", sdp->type, sdp->sdp);
-	peer_connection_set_local_description(ctx, sdp, _on_set_localSDP_success, _on_set_localSDP_failure);
+	peer_connection_set_local_description(ctx, sdp, _on_set_localSDP_success, NULL);
 }
 
 void _on_create_offer_failure(char *error)
