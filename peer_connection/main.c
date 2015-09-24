@@ -8,28 +8,28 @@
 
 void _on_negotiation_needed(peerconnection_ctx* ctx)
 {
-	fprintf(stderr, "hi~, _on_negotiation_needed");
+	fprintf(stderr, "\nwebrtc_wrapper: _on_negotiation_needed called\n\n");
 }
-
 
 void _on_ice_candidate(peerconnection_ctx* ctx, const char *candidate)
 {
-	fprintf(stderr, "got candidate: %s!!!!!!!!!!\n", candidate);
+	fprintf(stderr, "\nwebrtc_wrapper: _on_ice_candidate\n");
+	fprintf(stderr, "got candidate: %s\n\n", candidate);
 }
 
 void _on_signaling_state_change(peerconnection_ctx* ctx, signaling_state state)
 {
-
+	fprintf(stderr, "\nwebrtc_wrapper: _on_signaling_state_change: %d\n\n", state);
 }
 
 void _on_ice_connection_state_change(peerconnection_ctx* ctx, ice_connection_state state)
 {
-
+	fprintf(stderr, "\nwebrtc_wrapper: _on_ice_connection_state_change\n\n");
 }
 
 void _on_ice_gathering_state_change(peerconnection_ctx* ctx, ice_gathering_state state)
 {
-
+	fprintf(stderr, "\nwebrtc_wrapper: _on_ice_gathering_state_change\n\n");
 }
 
 
@@ -48,10 +48,10 @@ void _on_create_offer_success(peerconnection_ctx* ctx, rtc_session_description* 
 {
 	//const char *ssdp = peer_connection_local_description(ctx);
 	fprintf(stderr, "hi!, \ntype:\n%s\n\nsdp:\n%s\n", sdp->type, sdp->sdp);
-	peer_connection_set_local_description(ctx, sdp, _on_set_localSDP_success, NULL);
+	peer_connection_set_local_description(ctx, sdp, _on_set_localSDP_success, _on_set_localSDP_failure);
 }
 
-void _on_create_offer_failure(char *error)
+void _on_create_offer_failure(const char *error)
 {
 
 }
@@ -89,12 +89,13 @@ int main(int argc, char* argv[])
 		NULL);
 
 	peer_connection_create_datachannel(ctx, "demo", 
-										on_open_,
-										on_message_,
-										on_error_,
-										on_close_);
+										&on_open_,
+										&on_message_,
+										&on_error_,
+										&on_close_);
 
-	peer_connection_create_offer(ctx, _on_create_offer_success, _on_create_offer_failure);
+	/*TODO:_on_create_offer_failure hasn't worked yet */
+	peer_connection_create_offer(ctx, &_on_create_offer_success, &_on_create_offer_failure);
 
 	getchar();
 

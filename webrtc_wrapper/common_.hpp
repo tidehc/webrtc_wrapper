@@ -412,7 +412,7 @@ typedef cpp11::function<void(unsigned int handle)> _onnegotiationneededCallback;
 // http://www.w3.org/TR/webrtc/#event-icecandidate
 typedef cpp11::function<void(cpp11::shared_ptr<_RTCPeerConnectionIceEvent> e, unsigned int handle)> _onicecandidateCallback;
 // http://www.w3.org/TR/webrtc/#event-signalingstatechange
-typedef cpp11::function<void()> _onsignalingstatechangeCallback;
+typedef cpp11::function<void(unsigned int handle)> _onsignalingstatechangeCallback;
 // http://www.w3.org/TR/webrtc/#event-mediastream-addstream
 typedef cpp11::function<void(cpp11::shared_ptr<_MediaStreamEvent> stream)> _onaddstreamCallback;
 // http://www.w3.org/TR/webrtc/#event-mediastream-removestream

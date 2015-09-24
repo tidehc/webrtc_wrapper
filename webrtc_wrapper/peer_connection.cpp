@@ -28,7 +28,8 @@ typedef struct peerconnection_ctx_vars_
 	ice_connection_state ice_connection_state_;
 } peerconnection_ctx_vars_;
 
-typedef struct peerconnection_ctx_ops_{
+typedef struct peerconnection_ctx_ops_
+{
 	on_negotiation_needed_callback on_negotiation_needed_cb;
 	on_ice_candidate_callback on_ice_candidate_cb;
 	on_signaling_state_change_callback on_signaling_state_change_cb;
@@ -50,13 +51,15 @@ typedef struct rtc_ice_server_ {
 static map<unsigned int, pair<peerconnection_ctx*, _PeerConnection*> > pc_map_;
 static map<unsigned int, pair<datachannel_ctx*, _RTCDataChannel*> > dc_map_;
 
+
+// peer_connection callbacks
 // http://www.w3.org/TR/webrtc/#event-negotiation
 static void onnegotiationneededCallback(unsigned int handle)
 {
 	fprintf(stderr, "*INFO: onnegotiationneededCallback called\n");
 	peerconnection_ctx *ctx = pc_map_[handle].first;
+	ctx->ops->on_negotiation_needed_cb(ctx);
 }
-
 
 // http://www.w3.org/TR/webrtc/#event-icecandidate
 static void onicecandidateCallback(std::shared_ptr<_RTCPeerConnectionIceEvent> e, unsigned int handle)
@@ -75,7 +78,6 @@ static void onicecandidateCallback(std::shared_ptr<_RTCPeerConnectionIceEvent> e
 	}
 }
 
-
 // http://www.w3.org/TR/webrtc/#event-iceconnectionstatechange
 static void oniceconnectionstatechangeCallback()
 {
@@ -85,54 +87,35 @@ static void oniceconnectionstatechangeCallback()
 }
 
 // http://www.w3.org/TR/webrtc/#event-signalingstatechange
-static void onsignalingstatechangeCallback()
+static void onsignalingstatechangeCallback(unsigned int handle)
 {
-	fprintf(stderr, "*INFO: New signaling state\n");
-	// TODO: get the _PeerConnection obj's signaling state 
-	// and sync to peerconnection_ctx obj's
+	fprintf(stderr, "*INFO: onsignalingstatechangeCallback called\n");
+	_PeerConnection *peerConnection = pc_map_[handle].second;
+	peerconnection_ctx *ctx = pc_map_[handle].first;
+	
+	//overwrite the signaling state of ctx and call the ctx's callback
+	if (strcmp(peerConnection->SignalingState(), "stable"))
+		ctx->vars->signaling_state_ = SIG_STATE_STABLE;
+	else if (strcmp(peerConnection->SignalingState(), "have-local-offer"))
+		ctx->vars->signaling_state_ = SIG_STATE_HAVE_LOCAL_OFFER;
+	else if (strcmp(peerConnection->SignalingState(), "have-remote-offer"))
+		ctx->vars->signaling_state_ = SIG_STATE_HAVE_REMOTE_OFFER;
+	else if (strcmp(peerConnection->SignalingState(), "have-local-pranswer"))
+		ctx->vars->signaling_state_ = SIG_STATE_HAVE_LOCAL_PRANSWER;
+	else if (strcmp(peerConnection->SignalingState(), "have-remote-pranswer"))
+		ctx->vars->signaling_state_ = SIG_STATE_HAVE_REMOTE_PRANSWER;
+	else if (strcmp(peerConnection->SignalingState(), "closed"))
+		ctx->vars->signaling_state_ = SIG_STATE_CLOSED;
 
-	/*if (peerConnection) {
-		fprintf(stderr, "*INFO: New signaling state: %s", peerConnection->SignalingState());
-	}*/
+	ctx->ops->on_signaling_state_change_cb(ctx, ctx->vars->signaling_state_);
 }
-
 
 static void icecandidateErrorCb(std::shared_ptr<std::string> error)
 {
 	fprintf(stderr, "*INFO: candidate fail, %s\n", error.get());
 }
 
-
-static void CreateOfferSuccessCb(std::shared_ptr<_SessionDescription> sdp, unsigned int handle)
-{
-	// copy the sdp from _PeerConnction obj to peerconnection_ctx obj
-	peerconnection_ctx *ctx = pc_map_[handle].first;
-	char *ctx_local_description = ctx->vars->local_description_;
-	if (ctx_local_description == NULL)
-		ctx_local_description = (char *)calloc(1, 2048);
-	
-	_SessionDescription *sdp_ = sdp.get();
-	const char *sdp_str = (const char *)sdp->getSdp()->getPtr();
-	const char *type_str = (const char *)sdp->getType()->getPtr();
-
-	strncpy(ctx_local_description, sdp_str, strlen(sdp_str));
-
-	//call the callback of peerconnection_ctx
-	rtc_session_description *rtc_sdp = (rtc_session_description *)calloc(1, sizeof(rtc_session_description));
-	rtc_sdp->type = strdup(type_str);
-	rtc_sdp->sdp = strdup(sdp_str);
-	ctx->ops->create_offer_success_cb(ctx, rtc_sdp);
-}
-
-
-// http://www.w3.org/TR/webrtc/#idl-def-RTCPeerConnectionErrorCallback
-static void CreateOfferErrorCb(std::shared_ptr<std::string> error)
-{
-
-}
-
-
-WEBRTC_WRAPPER_API peerconnection_ctx* peer_connection_create(const char* configuration, 
+WEBRTC_WRAPPER_API peerconnection_ctx* peer_connection_create(const char* configuration,
 	on_negotiation_needed_callback negotiation_needed,
 	on_ice_candidate_callback ice_candidate,
 	on_signaling_state_change_callback signaling_state_change,
@@ -141,19 +124,19 @@ WEBRTC_WRAPPER_API peerconnection_ctx* peer_connection_create(const char* config
 	void* user_data)
 {
 	static unsigned int peer_connection_count = 0;
-	
+
 	// construct peerconnection_ctx structure and link the callback functions
 	peerconnection_ctx *ret = (peerconnection_ctx *)calloc(1, sizeof(peerconnection_ctx));
 	ret->ops = (peerconnection_ctx_ops_ *)calloc(1, sizeof(peerconnection_ctx_ops_));
 	ret->vars = (peerconnection_ctx_vars_ *)calloc(1, sizeof(peerconnection_ctx_vars_));
 	peerconnection_ctx_ops_ *ret_ops = ret->ops;
-	
+
 	ret_ops->on_negotiation_needed_cb = negotiation_needed;
 	ret_ops->on_ice_candidate_cb = ice_candidate;
 	ret_ops->on_signaling_state_change_cb = signaling_state_change;
 	ret_ops->on_ice_connection_state_change_cb = ice_connection_state_change;
 	ret_ops->on_ice_gathering_state_change_cb = ice_gathering_state_change;
-	
+
 	Json::Reader reader;
 	Json::Value root;
 	std::string ctx_config(configuration);
@@ -209,18 +192,37 @@ WEBRTC_WRAPPER_API peerconnection_ctx* peer_connection_create(const char* config
 	return ret;
 }
 
-WEBRTC_WRAPPER_API void peer_connection_destroy(peerconnection_ctx* ctx) {
-	std::map<unsigned int, pair<peerconnection_ctx*, _PeerConnection*> >::iterator it;
-	if (ctx != NULL) {
-		it = pc_map_.find(ctx->handle);
-		if (it != pc_map_.end()) {
-			pc_map_.erase(it);
-			free(ctx);
-		}
-	}
+
+static void CreateOfferSuccessCb(std::shared_ptr<_SessionDescription> sdp, unsigned int handle)
+{
+	// copy the sdp from _PeerConnction obj to peerconnection_ctx obj
+	peerconnection_ctx *ctx = pc_map_[handle].first;
+	char *ctx_local_description = ctx->vars->local_description_;
+	if (ctx_local_description == NULL)
+		ctx_local_description = (char *)calloc(1, 2048);
+	
+	_SessionDescription *sdp_ = sdp.get();
+	const char *sdp_str = (const char *)sdp->getSdp()->getPtr();
+	const char *type_str = (const char *)sdp->getType()->getPtr();
+
+	strncpy(ctx_local_description, sdp_str, strlen(sdp_str));
+
+	//call the callback of peerconnection_ctx
+	rtc_session_description *rtc_sdp = (rtc_session_description *)calloc(1, sizeof(rtc_session_description));
+	rtc_sdp->type = strdup(type_str);
+	rtc_sdp->sdp = strdup(sdp_str);
+	ctx->ops->create_offer_success_cb(ctx, rtc_sdp);
 }
 
-WEBRTC_WRAPPER_API int peer_connection_create_offer(peerconnection_ctx* ctx, on_rtc_session_description_callback success, on_rtc_peer_connection_error failure)
+// http://www.w3.org/TR/webrtc/#idl-def-RTCPeerConnectionErrorCallback
+static void CreateOfferErrorCb(std::shared_ptr<std::string> error)
+{
+
+}
+
+WEBRTC_WRAPPER_API int peer_connection_create_offer(peerconnection_ctx* ctx, 
+		on_rtc_session_description_callback success, 
+		on_rtc_peer_connection_error failure)
 {
 	unsigned int handle = ctx->handle;
 	_PeerConnection *peerConnection = pc_map_[handle].second;
@@ -231,19 +233,12 @@ WEBRTC_WRAPPER_API int peer_connection_create_offer(peerconnection_ctx* ctx, on_
 	return 1; //uniray: I'm not sure?
 }
 
-WEBRTC_WRAPPER_API void* peer_connection_get_user_data(peerconnection_ctx* ctx) {
-	return ctx->user_data_;
+WEBRTC_WRAPPER_API int peer_connection_create_answer(peerconnection_ctx* ctx,
+	on_rtc_session_description_callback success,
+	on_rtc_peer_connection_error failure)
+{
+	return 1;
 }
-
-WEBRTC_WRAPPER_API void peer_connection_engage(peerconnection_ctx* ctx) { // easy to meet peers ice negotiation timing
-
-}
-
-WEBRTC_WRAPPER_API void peer_connection_close(peerconnection_ctx* ctx) {
-
-}
-
-
 
 
 static void SetLocalSDPFailureCb(unsigned int handle, cpp11::shared_ptr<std::string> error)
@@ -256,14 +251,13 @@ static void SetLocalSDPFailureCb(unsigned int handle, cpp11::shared_ptr<std::str
 
 static void SetLocalSDPSuccessCb(unsigned int handle) /*not used yet*/
 {
-	
+
 }
 
-
-WEBRTC_WRAPPER_API void peer_connection_set_local_description(peerconnection_ctx* ctx, 
-									rtc_session_description* description, 
-									on_void_function success, 
-									on_rtc_peer_connection_error failure)
+WEBRTC_WRAPPER_API void peer_connection_set_local_description(peerconnection_ctx* ctx,
+	rtc_session_description* description,
+	on_void_function success,
+	on_rtc_peer_connection_error failure)
 {
 	unsigned int handle = ctx->handle;
 	_PeerConnection *peerConnection = pc_map_[handle].second;
@@ -282,10 +276,58 @@ WEBRTC_WRAPPER_API void peer_connection_set_local_description(peerconnection_ctx
 	peerConnection->SetLocalDescription(sdp, success, SetLocalSDPFailureCb);
 }
 
+WEBRTC_WRAPPER_API const char* peer_connection_local_description(peerconnection_ctx* ctx){
+	return NULL;
+}
+
 WEBRTC_WRAPPER_API void peer_connection_set_remote_description(peerconnection_ctx* ctx, rtc_session_description* description, on_void_function success, on_rtc_peer_connection_error failure)
 {
 
 }
+
+WEBRTC_WRAPPER_API const char* peer_connection_remote_description(peerconnection_ctx* ctx);
+
+
+WEBRTC_WRAPPER_API const char* peer_connection_remote_description(peerconnection_ctx* ctx);
+
+WEBRTC_WRAPPER_API signaling_state peer_connection_signaling_state(peerconnection_ctx* ctx);
+
+void peer_connection_add_ice_candidate(peerconnection_ctx* ctx,
+	const char* candidate,
+	on_void_function success,
+	on_rtc_peer_connection_error failure);
+
+WEBRTC_WRAPPER_API ice_gathering_state peer_connection_ice_gathering_state(peerconnection_ctx* ctx);
+
+WEBRTC_WRAPPER_API ice_connection_state peer_connection_ice_connection_state(peerconnection_ctx* ctx);
+
+WEBRTC_WRAPPER_API void peer_connection_close(peerconnection_ctx* ctx) {
+
+}
+
+
+WEBRTC_WRAPPER_API void peer_connection_destroy(peerconnection_ctx* ctx) {
+	std::map<unsigned int, pair<peerconnection_ctx*, _PeerConnection*> >::iterator it;
+	if (ctx != NULL) {
+		it = pc_map_.find(ctx->handle);
+		if (it != pc_map_.end()) {
+			pc_map_.erase(it);
+			free(ctx);
+		}
+	}
+}
+/* TODO: will be implemented later
+
+
+
+WEBRTC_WRAPPER_API void* peer_connection_get_user_data(peerconnection_ctx* ctx) {
+	return ctx->user_data_;
+}
+
+WEBRTC_WRAPPER_API void peer_connection_engage(peerconnection_ctx* ctx) { // easy to meet peers ice negotiation timing
+
+}
+*/
 
 
 // datachannel callback
@@ -294,7 +336,7 @@ static void onOpenCallback()
 	fprintf(stderr, "*INFO: on open!!!!!!!!!!!!!!!!!!\n");
 }
 
-WEBRTC_WRAPPER_API datachannel_ctx* peer_connection_create_datachannel(peerconnection_ctx* ctx, 
+WEBRTC_WRAPPER_API datachannel_ctx* peer_connection_create_datachannel(peerconnection_ctx* ctx,
 		const char* label,  /*TODO: datachannel config*/
 		on_datachannel_open_callback on_open_cb,
 		on_datachannel_message_callback on_message_cb,

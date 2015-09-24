@@ -425,7 +425,7 @@ void _RTCPeerConnection::OnStateChange(webrtc::PeerConnectionObserver::StateType
 	WE_DEBUG_INFO("_RTCPeerConnection::OnStateChange");
 	if (m_pcBase) {
 		if (state_changed == kSignalingState && m_pcBase->onsignalingstatechange) {
-			m_pcBase->onsignalingstatechange();
+			m_pcBase->onsignalingstatechange(m_pcBase->getHandle());
 		}
 		else if (state_changed == kIceState && m_pcBase->oniceconnectionstatechange) {
 			m_pcBase->oniceconnectionstatechange();
