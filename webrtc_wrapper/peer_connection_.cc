@@ -428,7 +428,7 @@ void _RTCPeerConnection::OnStateChange(webrtc::PeerConnectionObserver::StateType
 			m_pcBase->onsignalingstatechange(m_pcBase->getHandle());
 		}
 		else if (state_changed == kIceState && m_pcBase->oniceconnectionstatechange) {
-			m_pcBase->oniceconnectionstatechange();
+			m_pcBase->oniceconnectionstatechange(m_pcBase->getHandle());
 		}
 	}
 }
@@ -463,7 +463,7 @@ void _RTCPeerConnection::OnIceConnectionChange(webrtc::PeerConnectionInterface::
 {
 	WE_DEBUG_INFO("_RTCPeerConnection::OnIceConnectionChange");
 	if (m_pcBase && m_pcBase->oniceconnectionstatechange) {
-		m_pcBase->oniceconnectionstatechange();
+		m_pcBase->oniceconnectionstatechange(m_pcBase->getHandle());
 	}
 }
 
@@ -606,7 +606,7 @@ bool _PeerConnection::SetLocalDescription(const _SessionDescription* description
 	if (!_description) {
 		if (failureCallback) {
 			failureCallback(this->handle/*added by uniray*/,cpp11::shared_ptr<std::string>(new std::string(err.description)));
-			WE_DEBUG_ERROR("CreateSessionDescription eror: %s", err.description.c_str());
+			WE_DEBUG_ERROR("CreateSessionDescription erorr: %s", err.description.c_str());
 		}
 		return false;
 	}

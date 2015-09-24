@@ -418,7 +418,7 @@ typedef cpp11::function<void(cpp11::shared_ptr<_MediaStreamEvent> stream)> _onad
 // http://www.w3.org/TR/webrtc/#event-mediastream-removestream
 typedef cpp11::function<void(cpp11::shared_ptr<_MediaStreamEvent> stream)> _onremovestreamCallback;
 // http://www.w3.org/TR/webrtc/#event-iceconnectionstatechange
-typedef cpp11::function<void()> _oniceconnectionstatechangeCallback;
+typedef cpp11::function<void(unsigned int handle)> _oniceconnectionstatechangeCallback;
 // http://www.w3.org/TR/webrtc/#idl-def-RTCStatsCallback
 typedef cpp11::function<void(cpp11::shared_ptr<_RTCStatsReport> report)> _RTCStatsCallback;
 // http://www.w3.org/TR/webrtc/#idl-def-RTCDTMFToneChangeEvent

@@ -98,14 +98,14 @@ extern "C" {
 				on_void_function success, 
 				on_rtc_peer_connection_error failure);
 
-	WEBRTC_WRAPPER_API const char* peer_connection_local_description(peerconnection_ctx* ctx);
+	WEBRTC_WRAPPER_API rtc_session_description* peer_connection_local_description(peerconnection_ctx* ctx);
 
 	WEBRTC_WRAPPER_API void peer_connection_set_remote_description(peerconnection_ctx* ctx, 
 				rtc_session_description* description, 
 				on_void_function success, 
 				on_rtc_peer_connection_error failure);
 
-	WEBRTC_WRAPPER_API const char* peer_connection_remote_description(peerconnection_ctx* ctx);
+	WEBRTC_WRAPPER_API rtc_session_description* peer_connection_remote_description(peerconnection_ctx* ctx);
 
 	WEBRTC_WRAPPER_API signaling_state peer_connection_signaling_state(peerconnection_ctx* ctx);
 	

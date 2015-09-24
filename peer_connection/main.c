@@ -24,7 +24,7 @@ void _on_signaling_state_change(peerconnection_ctx* ctx, signaling_state state)
 
 void _on_ice_connection_state_change(peerconnection_ctx* ctx, ice_connection_state state)
 {
-	fprintf(stderr, "\nwebrtc_wrapper: _on_ice_connection_state_change\n\n");
+	fprintf(stderr, "\nwebrtc_wrapper: _on_ice_connection_state_change: %d\n\n", state);
 }
 
 void _on_ice_gathering_state_change(peerconnection_ctx* ctx, ice_gathering_state state)
@@ -46,7 +46,6 @@ void _on_set_localSDP_failure(const char *error)
 
 void _on_create_offer_success(peerconnection_ctx* ctx, rtc_session_description* sdp)
 {
-	//const char *ssdp = peer_connection_local_description(ctx);
 	fprintf(stderr, "hi!, \ntype:\n%s\n\nsdp:\n%s\n", sdp->type, sdp->sdp);
 	peer_connection_set_local_description(ctx, sdp, _on_set_localSDP_success, _on_set_localSDP_failure);
 }
@@ -98,9 +97,12 @@ int main(int argc, char* argv[])
 	peer_connection_create_offer(ctx, &_on_create_offer_success, &_on_create_offer_failure);
 
 	getchar();
+	rtc_session_description *local_SDP = peer_connection_local_description(ctx);
+	printf("\n==============================================\nhello sdp:\n%s", local_SDP->sdp);
+	getchar();
 
 	peer_connection_destroy(ctx);
-
+	
 	// Library resources should be released after all other resources be released
 	libwebrtc_deinitialize();
 	//libeverywhere_release_fake_peer_connection_factory();
