@@ -55,7 +55,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\webrtc_wrapper</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\webrtc_wrapper</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -86,7 +86,7 @@
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\webrtc_wrapper\webrtc_wrapper.vcxproj">
+    <ProjectReference Include="..\..\webrtc_wrapper\webrtc_wrapper.vcxproj">
       <Project>{da0f3f07-636f-4cb9-a099-f1896b23994c}</Project>
     </ProjectReference>
   </ItemGroup>
