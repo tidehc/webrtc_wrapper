@@ -68,13 +68,13 @@ static void onicecandidateCallback(std::shared_ptr<_RTCPeerConnectionIceEvent> e
 	_PeerConnection *peerConnection = pc_map_[handle].second;
 	if (e){
 		if (e->candidate) {
-			peerConnection->AddIceCandidate(e->candidate.get());
-		}
-		peerconnection_ctx *ctx = pc_map_[handle].first;
-		
-		_RTCIceCandidate* p = e->candidate.get();
-		const char *candidate = p->candidate();
-		ctx->ops->on_ice_candidate_cb(ctx, candidate);
+			//peerConnection->AddIceCandidate(e->candidate.get());
+			peerconnection_ctx *ctx = pc_map_[handle].first;
+
+			_RTCIceCandidate* p = e->candidate.get();
+			const char *candidate = p->candidate();
+			ctx->ops->on_ice_candidate_cb(ctx, candidate);
+		}	
 	}
 }
 
@@ -329,10 +329,18 @@ WEBRTC_WRAPPER_API rtc_session_description* peer_connection_remote_description(p
 
 WEBRTC_WRAPPER_API signaling_state peer_connection_signaling_state(peerconnection_ctx* ctx);
 
-void peer_connection_add_ice_candidate(peerconnection_ctx* ctx,
+WEBRTC_WRAPPER_API void peer_connection_add_ice_candidate(peerconnection_ctx* ctx,
 	const char* candidate,
 	on_void_function success,
-	on_rtc_peer_connection_error failure);
+	on_rtc_peer_connection_error failure)
+{
+	/* TODO: the success & failure callback are not implemented */
+	_PeerConnection *peerConnection = pc_map_[ctx->handle].second;
+
+	/* TODO: not sure the initialization is right */
+	_RTCIceCandidate *candidate_ = new _RTCIceCandidate(candidate, "data", 0);
+	peerConnection->AddIceCandidate(candidate_);
+}
 
 WEBRTC_WRAPPER_API ice_gathering_state peer_connection_ice_gathering_state(peerconnection_ctx* ctx);
 

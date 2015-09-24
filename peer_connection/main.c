@@ -15,6 +15,9 @@ void _on_ice_candidate(peerconnection_ctx* ctx, const char *candidate)
 {
 	fprintf(stderr, "\nwebrtc_wrapper: _on_ice_candidate\n");
 	fprintf(stderr, "got candidate: %s\n\n", candidate);
+	
+	if(candidate)
+		peer_connection_add_ice_candidate(ctx, candidate, NULL, NULL);/* TODO: the success & failure callback are not implemented */
 }
 
 void _on_signaling_state_change(peerconnection_ctx* ctx, signaling_state state)

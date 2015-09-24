@@ -109,7 +109,7 @@ extern "C" {
 
 	WEBRTC_WRAPPER_API signaling_state peer_connection_signaling_state(peerconnection_ctx* ctx);
 	
-	void peer_connection_add_ice_candidate(peerconnection_ctx* ctx, 
+	WEBRTC_WRAPPER_API void peer_connection_add_ice_candidate(peerconnection_ctx* ctx,
 				const char* candidate, 
 				on_void_function success, 
 				on_rtc_peer_connection_error failure);
