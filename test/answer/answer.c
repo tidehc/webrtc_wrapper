@@ -16,8 +16,8 @@ void _on_ice_candidate(peerconnection_ctx* ctx, const char *candidate)
 {
 	fprintf(stderr, "\nwebrtc_wrapper: _on_ice_candidate\n");
 	fprintf(stderr, "got candidate: %s\n\n", candidate);
-	
-	if(candidate)
+
+	if (candidate)
 		peer_connection_add_ice_candidate(ctx, candidate, NULL, NULL);/* TODO: the success & failure callback are not implemented */
 }
 
@@ -46,7 +46,7 @@ void _on_set_localSDP_success()
 void _on_set_localSDP_failure(const char *error)
 {
 	fprintf(stderr, "_on_set_localSDP_failure:%s\n", error);
-} 
+}
 
 void _on_create_offer_success(peerconnection_ctx* ctx, rtc_session_description* sdp)
 {
@@ -59,7 +59,15 @@ void _on_create_offer_failure(const char *error)
 
 }
 
+void _on_set_remoteSDP_success()
+{
+	fprintf(stderr, "\n\n_on_set_remoteSDP_success   ????????????????????????????\n\n");
+}
 
+void _on_set_remoteSDP_failure(const char *error)
+{
+	fprintf(stderr, "\n\n _on_set_localSDP_failure:%s !!!!!!\n\n", error);
+}
 
 // datachannel callback
 void on_open_()
@@ -91,31 +99,33 @@ int main(int argc, char* argv[])
 		&_on_ice_gathering_state_change,
 		NULL);
 
-	peer_connection_create_datachannel(ctx, "demo", 
-										&on_open_,
-										&on_message_,
-										&on_error_,
-										&on_close_);
+	peer_connection_create_datachannel(ctx, "demo",
+		&on_open_,
+		&on_message_,
+		&on_error_,
+		&on_close_);
 
-	/*TODO:_on_create_offer_failure hasn't worked yet */
-	peer_connection_create_offer(ctx, &_on_create_offer_success, &_on_create_offer_failure);
 
-	getchar();
-	rtc_session_description *local_SDP = peer_connection_local_description(ctx);
-	printf("\n==============================================\nhello sdp:\n%s", local_SDP->sdp);
-	
 	FILE *pFile;
-	pFile = fopen("..\\SDP\\offerSDP", "wb");
-	fwrite(local_SDP->sdp, 1, strlen(local_SDP->sdp), pFile);
+	pFile = fopen("..\\SDP\\offerSDP", "rb");
+	char offerSDP_str[2048];
+	memset(offerSDP_str, 0, 2048);
+	fread(offerSDP_str, 1, 2048, pFile);
 	fclose(pFile);
+	printf("offerSDP: %s\n", offerSDP_str);
 
+	rtc_session_description *remote_description = peer_connection_initial_SDP("offer", offerSDP_str);
+	peer_connection_set_remote_description(ctx, remote_description, _on_set_remoteSDP_success, _on_set_remoteSDP_failure);
+
+
+		
 	getchar();
 
 	peer_connection_destroy(ctx);
-	
+
 	// Library resources should be released after all other resources be released
 	libwebrtc_deinitialize();
 	//libeverywhere_release_fake_peer_connection_factory();
-	
+
 	return 0;
 }

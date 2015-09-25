@@ -255,19 +255,6 @@ WEBRTC_WRAPPER_API int peer_connection_create_answer(peerconnection_ctx* ctx,
 }
 
 
-static void SetLocalSDPFailureCb(unsigned int handle, cpp11::shared_ptr<std::string> error)
-{
-	const std::string error_str = *(error.get());
-	const char* c_error = error_str.c_str();
-	peerconnection_ctx *ctx = pc_map_[handle].first;
-	ctx->ops->set_localSDP_failure_cb(c_error);
-}
-
-static void SetLocalSDPSuccessCb(unsigned int handle) /*not used yet*/
-{
-
-}
-
 WEBRTC_WRAPPER_API void peer_connection_set_local_description(peerconnection_ctx* ctx,
 	rtc_session_description* description,
 	on_void_function success,
@@ -281,13 +268,12 @@ WEBRTC_WRAPPER_API void peer_connection_set_local_description(peerconnection_ctx
 
 	const char *sdpPtr = description->sdp;
 	size_t sdpSize = strlen(sdpPtr);
-	const char *typePtr = "offer\0";
+	const char *typePtr = description->type;
 	size_t typeSize = strlen(typePtr);
 
 	_SessionDescription *sdp = new _SessionDescription(sdpPtr, sdpSize, typePtr, typeSize);
 
-	// TODO: the argument 2 and 3 of SetLocalDescription() might be a problem
-	peerConnection->SetLocalDescription(sdp, success, SetLocalSDPFailureCb);
+	peerConnection->SetLocalDescription(sdp, success, failure);
 }
 
 WEBRTC_WRAPPER_API rtc_session_description* peer_connection_local_description(peerconnection_ctx* ctx){
@@ -320,9 +306,23 @@ WEBRTC_WRAPPER_API rtc_session_description* peer_connection_local_description(pe
 	return ctx->vars->local_description_;
 }
 
+
 WEBRTC_WRAPPER_API void peer_connection_set_remote_description(peerconnection_ctx* ctx, rtc_session_description* description, on_void_function success, on_rtc_peer_connection_error failure)
 {
+	unsigned int handle = ctx->handle;
+	_PeerConnection *peerConnection = pc_map_[handle].second;
+	peerconnection_ctx_ops_ *ops = ctx->ops;
+	ops->set_localSDP_success_cb = success;
+	ops->set_localSDP_failure_cb = failure;
 
+	const char *sdpPtr = description->sdp;
+	size_t sdpSize = strlen(sdpPtr);
+	const char *typePtr = description->type;
+	size_t typeSize = strlen(typePtr);
+
+	_SessionDescription *sdp = new _SessionDescription(sdpPtr, sdpSize, typePtr, typeSize);
+
+	peerConnection->SetRemoteDescription(sdp, success, failure);
 }
 
 WEBRTC_WRAPPER_API rtc_session_description* peer_connection_remote_description(peerconnection_ctx* ctx);
@@ -416,4 +416,14 @@ WEBRTC_WRAPPER_API datachannel_ctx* peer_connection_create_datachannel(peerconne
 		ret->handle = handle;
 	}
 	return NULL;
+}
+
+
+WEBRTC_WRAPPER_API rtc_session_description *peer_connection_initial_SDP(const char *type,
+	const char *sdp)
+{
+	rtc_session_description *session_description = (rtc_session_description *)calloc(1, sizeof(rtc_session_description));
+	session_description->type = strdup(type);
+	session_description->sdp = strdup(sdp);
+	return session_description;
 }

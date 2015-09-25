@@ -10,6 +10,8 @@
 #include "talk/app/webrtc/peerconnectioninterface.h"
 #include "webrtc/base/scoped_ptr.h"
 
+#include "peer_connection.h"
+
 class _Buffer;
 class _MediaStream;
 class _PeerConnection;
@@ -40,9 +42,9 @@ public:
 
 	bool createOffer(_RTCSessionDescriptionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr, const webrtc::MediaConstraintsInterface* constraints = NULL);
 	bool createAnswer(_RTCSessionDescriptionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr, const webrtc::MediaConstraintsInterface* constraints = NULL);
-	bool setLocalDescription(webrtc::SessionDescriptionInterface* description, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback_uniray failureCallback = nullPtr);
+	bool setLocalDescription(webrtc::SessionDescriptionInterface* description, on_void_function successCallback = nullPtr, on_rtc_peer_connection_error failureCallback = nullPtr);
 	const webrtc::SessionDescriptionInterface* localDescription();
-	bool setRemoteDescription(webrtc::SessionDescriptionInterface* description, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback_uniray failureCallback = nullPtr);
+	bool setRemoteDescription(webrtc::SessionDescriptionInterface* description, on_void_function successCallback = nullPtr, on_rtc_peer_connection_error failureCallback = nullPtr);
 	const webrtc::SessionDescriptionInterface* remoteDescription();
 	const char* signalingState();
 	bool updateIce(const webrtc::PeerConnectionInterface::RTCConfiguration& configuration, const webrtc::MediaConstraintsInterface* constraints = NULL);
@@ -103,9 +105,9 @@ public:
 
 	bool CreateOffer(_RTCSessionDescriptionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr, const _MediaConstraintsObj* constraints = NULL);
 	bool CreateAnswer(_RTCSessionDescriptionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr, const _MediaConstraintsObj* constraints = NULL);
-	bool SetLocalDescription(const _SessionDescription* description, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback_uniray failureCallback = nullPtr);
+	bool SetLocalDescription(const _SessionDescription* description, on_void_function successCallback = nullPtr, on_rtc_peer_connection_error failureCallback = nullPtr);
 	cpp11::shared_ptr<_SessionDescription> LocalDescription();
-	bool SetRemoteDescription(const _SessionDescription* description, _VoidFunctionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback_uniray failureCallback = nullPtr);
+	bool SetRemoteDescription(const _SessionDescription* description, on_void_function successCallback = nullPtr, on_rtc_peer_connection_error failureCallback = nullPtr);
 	cpp11::shared_ptr<_SessionDescription> RemoteDescription();
 	const char* SignalingState();
 	bool UpdateIce(const _RTCConfiguration* configuration = NULL, const _MediaConstraintsObj* constraints = NULL);

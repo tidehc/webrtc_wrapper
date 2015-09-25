@@ -9,7 +9,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "webrtc_wrapper_console", "w
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2830DFA0-EE0E-4E79-A576-CD1E59988703}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "peer_connection", "test\peer_connection\peer_connection.vcxproj", "{61FCBA3F-26C1-4D13-A43F-61E02D69625F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "offer", "test\peer_connection\peer_connection.vcxproj", "{61FCBA3F-26C1-4D13-A43F-61E02D69625F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "answer", "test\answer\answer.vcxproj", "{6947CE78-EF70-4607-B9F2-B46262B4DB91}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,11 +31,16 @@ Global
 		{61FCBA3F-26C1-4D13-A43F-61E02D69625F}.Debug|Win32.Build.0 = Debug|Win32
 		{61FCBA3F-26C1-4D13-A43F-61E02D69625F}.Release|Win32.ActiveCfg = Release|Win32
 		{61FCBA3F-26C1-4D13-A43F-61E02D69625F}.Release|Win32.Build.0 = Release|Win32
+		{6947CE78-EF70-4607-B9F2-B46262B4DB91}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6947CE78-EF70-4607-B9F2-B46262B4DB91}.Debug|Win32.Build.0 = Debug|Win32
+		{6947CE78-EF70-4607-B9F2-B46262B4DB91}.Release|Win32.ActiveCfg = Release|Win32
+		{6947CE78-EF70-4607-B9F2-B46262B4DB91}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{61FCBA3F-26C1-4D13-A43F-61E02D69625F} = {2830DFA0-EE0E-4E79-A576-CD1E59988703}
+		{6947CE78-EF70-4607-B9F2-B46262B4DB91} = {2830DFA0-EE0E-4E79-A576-CD1E59988703}
 	EndGlobalSection
 EndGlobal
