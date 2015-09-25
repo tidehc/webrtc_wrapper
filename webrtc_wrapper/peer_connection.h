@@ -136,8 +136,10 @@ extern "C" {
 				on_datachannel_close_callback on_close_cb);
 
 
-	WEBRTC_WRAPPER_API rtc_session_description *peer_connection_initial_SDP(const char *type,
-				const char *sdp);
+	WEBRTC_WRAPPER_API rtc_session_description *peer_connection_initial_SDP(const char *sdp,
+		size_t sdp_size,
+		const char *type,
+		size_t type_size);
 #ifdef __cplusplus
 }
 #endif

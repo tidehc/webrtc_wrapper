@@ -40,8 +40,8 @@ public:
 	_RTCPeerConnection(const _PeerConnection* pcBase, const webrtc::PeerConnectionInterface::RTCConfiguration& configuration, const webrtc::MediaConstraintsInterface* constraints = NULL);
 	bool IsValid() { return m_bValid; }
 
-	bool createOffer(_RTCSessionDescriptionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr, const webrtc::MediaConstraintsInterface* constraints = NULL);
-	bool createAnswer(_RTCSessionDescriptionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr, const webrtc::MediaConstraintsInterface* constraints = NULL);
+	bool createOffer(peerconnection_ctx *ctx/*added by uniray*/, on_rtc_session_description_callback successCallback = nullPtr, on_rtc_peer_connection_error failureCallback = nullPtr, const webrtc::MediaConstraintsInterface* constraints = NULL);
+	bool createAnswer(peerconnection_ctx *ctx/*added by uniray*/, on_rtc_session_description_callback successCallback = nullPtr, on_rtc_peer_connection_error failureCallback = nullPtr, const webrtc::MediaConstraintsInterface* constraints = NULL);
 	bool setLocalDescription(webrtc::SessionDescriptionInterface* description, on_void_function successCallback = nullPtr, on_rtc_peer_connection_error failureCallback = nullPtr);
 	const webrtc::SessionDescriptionInterface* localDescription();
 	bool setRemoteDescription(webrtc::SessionDescriptionInterface* description, on_void_function successCallback = nullPtr, on_rtc_peer_connection_error failureCallback = nullPtr);
@@ -103,8 +103,8 @@ public:
 	bool Init(const _RTCConfiguration* configuration = NULL, const _MediaConstraintsObj* constraints = NULL);
 	bool IsInitialized() { return m_bInitialized; }
 
-	bool CreateOffer(_RTCSessionDescriptionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr, const _MediaConstraintsObj* constraints = NULL);
-	bool CreateAnswer(_RTCSessionDescriptionCallback successCallback = nullPtr, _RTCPeerConnectionErrorCallback failureCallback = nullPtr, const _MediaConstraintsObj* constraints = NULL);
+	bool CreateOffer(peerconnection_ctx *ctx/*added by uniray*/, on_rtc_session_description_callback successCallback = nullPtr, on_rtc_peer_connection_error failureCallback = nullPtr, const _MediaConstraintsObj* constraints = NULL);
+	bool CreateAnswer(peerconnection_ctx *ctx/*added by uniray*/, on_rtc_session_description_callback successCallback = nullPtr, on_rtc_peer_connection_error failureCallback = nullPtr, const _MediaConstraintsObj* constraints = NULL);
 	bool SetLocalDescription(const _SessionDescription* description, on_void_function successCallback = nullPtr, on_rtc_peer_connection_error failureCallback = nullPtr);
 	cpp11::shared_ptr<_SessionDescription> LocalDescription();
 	bool SetRemoteDescription(const _SessionDescription* description, on_void_function successCallback = nullPtr, on_rtc_peer_connection_error failureCallback = nullPtr);

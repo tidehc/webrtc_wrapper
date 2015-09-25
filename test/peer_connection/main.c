@@ -56,7 +56,7 @@ void _on_create_offer_success(peerconnection_ctx* ctx, rtc_session_description* 
 
 void _on_create_offer_failure(const char *error)
 {
-
+	fprintf(stderr, "\n\nhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh\n\n");
 }
 
 
@@ -96,7 +96,6 @@ int main(int argc, char* argv[])
 										&on_message_,
 										&on_error_,
 										&on_close_);
-
 	/*TODO:_on_create_offer_failure hasn't worked yet */
 	peer_connection_create_offer(ctx, &_on_create_offer_success, &_on_create_offer_failure);
 

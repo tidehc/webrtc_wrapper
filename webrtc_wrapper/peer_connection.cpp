@@ -206,34 +206,6 @@ WEBRTC_WRAPPER_API peerconnection_ctx* peer_connection_create(const char* config
 }
 
 
-static void CreateOfferSuccessCb(std::shared_ptr<_SessionDescription> sdp, unsigned int handle)
-{
-	// copy the sdp from _PeerConnction obj to peerconnection_ctx obj
-	peerconnection_ctx *ctx = pc_map_[handle].first;
-	/* TODO: need to update ctx->vars->local_description_ ? 
-		I don't think so because ctx->vars->local_description_ is encapsulated.
-		wrapper users won't care it is updated.
-	*/
-	char *type_str = (char *)sdp.get()->getType()->getPtr();
-	char *sdp_str = (char *)sdp.get()->getSdp()->getPtr();
-	size_t type_size = sdp.get()->getType()->getSize();
-	size_t sdp_size = sdp.get()->getSdp()->getSize();
-
-	rtc_session_description *rtc_sdp = (rtc_session_description *)calloc(1, sizeof(rtc_session_description));
-	rtc_sdp->type = (char *)calloc(1, type_size+1);
-	rtc_sdp->sdp = (char *)calloc(1, sdp_size+1);
-	strncpy(rtc_sdp->type, type_str, type_size);
-	strncpy(rtc_sdp->sdp, sdp_str, sdp_size);
-	//call the callback of peerconnection_ctx
-	ctx->ops->create_offer_success_cb(ctx, rtc_sdp);
-}
-
-// http://www.w3.org/TR/webrtc/#idl-def-RTCPeerConnectionErrorCallback
-static void CreateOfferErrorCb(std::shared_ptr<std::string> error)
-{
-
-}
-
 WEBRTC_WRAPPER_API int peer_connection_create_offer(peerconnection_ctx* ctx, 
 		on_rtc_session_description_callback success, 
 		on_rtc_peer_connection_error failure)
@@ -243,15 +215,21 @@ WEBRTC_WRAPPER_API int peer_connection_create_offer(peerconnection_ctx* ctx,
 	peerconnection_ctx_ops_ *ops = ctx->ops;
 	ops->create_offer_success_cb = success;
 	ops->create_offer_failure_cb = failure;
-	peerConnection->CreateOffer(CreateOfferSuccessCb, CreateOfferErrorCb);
-	return 1; //uniray: I'm not sure?
+	peerConnection->CreateOffer(ctx /*added by uniray*/, success, failure);
+	return 1; //TODO: uniray: I'm not sure?
 }
 
 WEBRTC_WRAPPER_API int peer_connection_create_answer(peerconnection_ctx* ctx,
 	on_rtc_session_description_callback success,
 	on_rtc_peer_connection_error failure)
 {
-	return 1;
+	unsigned int handle = ctx->handle;
+	_PeerConnection *peerConnection = pc_map_[handle].second;
+	peerconnection_ctx_ops_ *ops = ctx->ops;
+	ops->create_offer_success_cb = success;
+	ops->create_offer_failure_cb = failure;
+	peerConnection->CreateAnswer(ctx /*added by uniray*/, success, failure);
+	return 1; //TODO: uniray: I'm not sure?
 }
 
 
@@ -419,11 +397,15 @@ WEBRTC_WRAPPER_API datachannel_ctx* peer_connection_create_datachannel(peerconne
 }
 
 
-WEBRTC_WRAPPER_API rtc_session_description *peer_connection_initial_SDP(const char *type,
-	const char *sdp)
+WEBRTC_WRAPPER_API rtc_session_description *peer_connection_initial_SDP(const char *sdp,
+		size_t sdp_size,
+		const char *type, 
+		size_t type_size)
 {
 	rtc_session_description *session_description = (rtc_session_description *)calloc(1, sizeof(rtc_session_description));
-	session_description->type = strdup(type);
-	session_description->sdp = strdup(sdp);
+	session_description->type = (char *)calloc(1, type_size+1);
+	session_description->sdp = (char *)calloc(1, sdp_size+1);
+	strncpy(session_description->type, type, type_size);
+	strncpy(session_description->sdp, sdp, sdp_size);
 	return session_description;
 }

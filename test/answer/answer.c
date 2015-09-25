@@ -48,18 +48,8 @@ void _on_set_localSDP_failure(const char *error)
 	fprintf(stderr, "_on_set_localSDP_failure:%s\n", error);
 }
 
-void _on_create_offer_success(peerconnection_ctx* ctx, rtc_session_description* sdp)
-{
-	fprintf(stderr, "hi!, \ntype:\n%s\n\nsdp:\n%s\n", sdp->type, sdp->sdp);
-	peer_connection_set_local_description(ctx, sdp, _on_set_localSDP_success, _on_set_localSDP_failure);
-}
 
-void _on_create_offer_failure(const char *error)
-{
-
-}
-
-void _on_set_remoteSDP_success()
+void _on_set_remoteSDP_success(/*TODO: need add ctx??*/)
 {
 	fprintf(stderr, "\n\n_on_set_remoteSDP_success   ????????????????????????????\n\n");
 }
@@ -112,9 +102,9 @@ int main(int argc, char* argv[])
 	memset(offerSDP_str, 0, 2048);
 	fread(offerSDP_str, 1, 2048, pFile);
 	fclose(pFile);
-	printf("offerSDP: %s\n", offerSDP_str);
+	printf("offerSDP: \n%s\n", offerSDP_str);
 
-	rtc_session_description *remote_description = peer_connection_initial_SDP("offer", offerSDP_str);
+	rtc_session_description *remote_description = peer_connection_initial_SDP(offerSDP_str, strlen(offerSDP_str), "offer", 5);
 	peer_connection_set_remote_description(ctx, remote_description, _on_set_remoteSDP_success, _on_set_remoteSDP_failure);
 
 

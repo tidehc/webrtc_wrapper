@@ -58,6 +58,58 @@ private:
 };
 
 
+// added by uniray
+class FakeCreateSessionDescriptionObserver
+	: public webrtc::CreateSessionDescriptionObserver {
+public:
+	static FakeCreateSessionDescriptionObserver* Create(const _RTCPeerConnection* pc, peerconnection_ctx *ctx, on_rtc_session_description_callback successCallback = nullPtr, on_rtc_peer_connection_error failureCallback = nullPtr) {
+		return
+			new rtc::RefCountedObject<FakeCreateSessionDescriptionObserver>(pc, ctx, successCallback, failureCallback);
+	}
+	virtual void OnSuccess(webrtc::SessionDescriptionInterface* desc) {
+		LOG(INFO) << __FUNCTION__;
+		if (m_pc) {
+#if 0
+			const_cast<_RTCPeerConnection*>(m_pc)->setLocalDescription(desc);
+#endif
+		}
+		if (m_successCallback) {
+			std::string sdp;
+			desc->ToString(&sdp);
+			cpp11::shared_ptr<_SessionDescription>_sdp(new _SessionDescription((const void*)sdp.c_str(), sdp.length(), (const void*)desc->type().c_str(), desc->type().length()));
+			rtc_session_description *rtc_sdp = peer_connection_initial_SDP(sdp.c_str(), 
+																			sdp.length(), 
+																			desc->type().c_str(), 
+																			desc->type().length());
+			m_successCallback(m_ctx, rtc_sdp); 
+		}
+	}
+	virtual void OnFailure(const std::string& error) {
+		LOG(INFO) << __FUNCTION__ << " " << error;
+		cpp11::shared_ptr<std::string> err(new std::string(error));
+		if (m_failureCallback) {
+			m_failureCallback(err.get()->c_str());
+		}
+	}
+
+protected:
+	FakeCreateSessionDescriptionObserver(const _RTCPeerConnection* pc, peerconnection_ctx *ctx, on_rtc_session_description_callback successCallback = nullPtr, on_rtc_peer_connection_error failureCallback = nullPtr)
+		: m_pc(pc)
+		, m_ctx(ctx)
+		, m_successCallback(successCallback)
+		, m_failureCallback(failureCallback){}
+	virtual ~FakeCreateSessionDescriptionObserver()
+	{
+		WE_DEBUG_INFO("~FakeCreateSessionDescriptionObserver");
+	}
+private:
+	const _RTCPeerConnection* m_pc;
+	on_rtc_session_description_callback m_successCallback;
+	on_rtc_peer_connection_error m_failureCallback;
+	peerconnection_ctx *m_ctx; /*added by uniray*/
+};
+
+
 
 
 
@@ -220,19 +272,19 @@ _RTCPeerConnection::_RTCPeerConnection(const _PeerConnection* pcBase, const webr
 	m_bValid = true;
 }
 
-bool _RTCPeerConnection::createOffer(_RTCSessionDescriptionCallback successCallback /*= nullPtr*/, _RTCPeerConnectionErrorCallback failureCallback /*= nullPtr*/, const webrtc::MediaConstraintsInterface* constraints /*= NULL*/)
+bool _RTCPeerConnection::createOffer(peerconnection_ctx* ctx/*added by uniray*/, on_rtc_session_description_callback successCallback /*= nullPtr*/, on_rtc_peer_connection_error failureCallback /*= nullPtr*/, const webrtc::MediaConstraintsInterface* constraints /*= NULL*/)
 {
 	if (IsValid()) {
-		m_peer_connection->CreateOffer(DummyCreateSessionDescriptionObserver::Create(this, successCallback, failureCallback), constraints);
+		m_peer_connection->CreateOffer(FakeCreateSessionDescriptionObserver::Create(this, ctx/*added by uniray*/, successCallback, failureCallback), constraints);
 		return true;
 	}
 	return false;
 }
 
-bool _RTCPeerConnection::createAnswer(_RTCSessionDescriptionCallback successCallback /*= nullPtr*/, _RTCPeerConnectionErrorCallback failureCallback /*= nullPtr*/, const webrtc::MediaConstraintsInterface* constraints /*= NULL*/)
+bool _RTCPeerConnection::createAnswer(peerconnection_ctx* ctx/*added by uniray*/, on_rtc_session_description_callback successCallback /*= nullPtr*/, on_rtc_peer_connection_error failureCallback /*= nullPtr*/, const webrtc::MediaConstraintsInterface* constraints /*= NULL*/)
 {
 	if (IsValid()) {
-		m_peer_connection->CreateAnswer(DummyCreateSessionDescriptionObserver::Create(this, successCallback, failureCallback), constraints);
+		m_peer_connection->CreateAnswer(FakeCreateSessionDescriptionObserver::Create(this, ctx/*added by uniray*/, successCallback, failureCallback), constraints);
 		return true;
 	}
 	return false;
@@ -617,19 +669,19 @@ bool _PeerConnection::Init(const _RTCConfiguration* configuration /*= NULL*/, co
 
 // http://www.w3.org/TR/webrtc/#widl-RTCPeerConnection-createOffer-void-RTCSessionDescriptionCallback-successCallback-RTCPeerConnectionErrorCallback-failureCallback-MediaConstraints-constraints
 // void createOffer (RTCSessionDescriptionCallback successCallback, RTCPeerConnectionErrorCallback failureCallback, optional MediaConstraints constraints);
-bool _PeerConnection::CreateOffer(_RTCSessionDescriptionCallback successCallback /*= nullPtr*/, _RTCPeerConnectionErrorCallback failureCallback /*= nullPtr*/, const _MediaConstraintsObj* constraints /*= NULL*/)
+bool _PeerConnection::CreateOffer(peerconnection_ctx *ctx/*added by uniray*/, on_rtc_session_description_callback successCallback /*= nullPtr*/, on_rtc_peer_connection_error failureCallback /*= nullPtr*/, const _MediaConstraintsObj* constraints /*= NULL*/)
 {
 	CHECK_INITIALIZED();
-	return m_peer_connection->createOffer(successCallback, failureCallback, BuildConstraints(constraints));
+	return m_peer_connection->createOffer(ctx/*added by uniray*/, successCallback, failureCallback, BuildConstraints(constraints));
 }
 
 // http://www.w3.org/TR/webrtc/#widl-RTCPeerConnection-createAnswer-void-RTCSessionDescriptionCallback-successCallback-RTCPeerConnectionErrorCallback-failureCallback-MediaConstraints-constraints
 // void createAnswer (RTCSessionDescriptionCallback successCallback, RTCPeerConnectionErrorCallback failureCallback, optional MediaConstraints constraints)
-bool _PeerConnection::CreateAnswer(_RTCSessionDescriptionCallback successCallback /*= nullPtr*/, _RTCPeerConnectionErrorCallback failureCallback /*= nullPtr*/, const _MediaConstraintsObj* constraints /*= NULL*/)
+bool _PeerConnection::CreateAnswer(peerconnection_ctx *ctx/*added by uniray*/, on_rtc_session_description_callback successCallback /*= nullPtr*/, on_rtc_peer_connection_error failureCallback /*= nullPtr*/, const _MediaConstraintsObj* constraints /*= NULL*/)
 {
 	CHECK_INITIALIZED();
 	m_sdp_local = nullPtr;
-	return m_peer_connection->createAnswer(successCallback, failureCallback, BuildConstraints(constraints));
+	return m_peer_connection->createAnswer(ctx/*added by uniray*/,successCallback, failureCallback, BuildConstraints(constraints));
 }
 
 // http://www.w3.org/TR/webrtc/#widl-RTCPeerConnection-setLocalDescription-void-RTCSessionDescription-description-VoidFunction-successCallback-RTCPeerConnectionErrorCallback-failureCallback
